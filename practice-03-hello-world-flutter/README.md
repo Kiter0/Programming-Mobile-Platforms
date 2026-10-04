@@ -1,17 +1,37 @@
-# business_card
+# Практична робота 3: Hello World в Flutter
 
-A new Flutter project.
+**Варіант 1:** Візитівка розробника
 
-## Getting Started
+## Що зроблено
+Застосунок-візитівка з одного екрана: аватар (`CircleAvatar`), ім'я,
+спеціальність, 4 контакти (іконка + підпис) та кнопка «Змінити тему»,
+що перемикає світлу й темну тему. Стан теми зберігається у `StatefulWidget`.
 
-This project is a starting point for a Flutter application.
+## Як запустити
+1. Встановити Flutter SDK та Android Studio (Android SDK, емулятор).
+2. Перевірити середовище: `flutter doctor`
+3. У папці проєкту: `flutter pub get`
+4. Запустити емулятор і виконати: `flutter run`
 
-A few resources to get you started if this is your first Flutter project:
+## Структура проєкту
+- `lib/main.dart` — запуск, теми, стан теми (`StatefulWidget`)
+- `lib/screens/home_screen.dart` — екран візитівки
+- `lib/widgets/contact_card.dart` — віджет картки контакту (використовується 4 рази)
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Скриншоти
+![flutter doctor](docs/flutter-doctor.png)
+![Світла тема](docs/emulator-light.png)
+![Темна тема](docs/emulator-dark.png)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Hot Reload / Hot Restart
+## Hot Reload / Hot Restart
+
+| № | Експеримент | Дія | Результат | Стан збережено? |
+|---|-------------|-----|-----------|-----------------|
+| 1 | Зміна тексту | Змінив текст у `home_screen.dart`, виконав Hot Reload (`r`) | Hot Reload спрацював, текст оновився | Так |
+| 2 | Збереження стану | Увімкнув темну тему, змінив текст, виконав Hot Reload | Hot Reload спрацював | Так, тема лишилась темною |
+| 3 | Початкове значення поля `State` | У `main.dart` змінив `ThemeMode.light` на `ThemeMode.dark`, виконав Hot Reload | Код завантажився (`Reloaded 1 of 756 libraries`), але на екрані нічого не змінилось | Так, поле зберегло старе значення |
+| 4 | Те саме значення, але Hot Restart | Виконав Hot Restart (`R`) | Застосунок перезапустився одразу з темною темою | Ні, стан скинуто |
+
+**Пояснення.** Початкове значення поля (`ThemeMode _themeMode = ThemeMode.light;`) присвоюється один раз, коли Flutter створює об'єкт `State`. Hot Reload підмінює код методів (наприклад, `build`), але вже існуючий `State` не створює заново, тому нове початкове значення не застосовується. Hot Restart перезапускає застосунок і створює `State` заново, через що поле отримує нове значення, а накопичений стан скидається.
+
