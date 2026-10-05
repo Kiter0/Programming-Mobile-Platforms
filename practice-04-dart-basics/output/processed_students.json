@@ -1,0 +1,82 @@
+[
+  {
+    "id": "S1",
+    "name": "Анна Коваль",
+    "gpa": 86.67,
+    "passedCourses": 3,
+    "failedCourses": 0,
+    "level": "добре"
+  },
+  {
+    "id": "S2",
+    "name": "Іван Мельник",
+    "gpa": 62.5,
+    "passedCourses": 1,
+    "failedCourses": 1,
+    "level": "задовільно"
+  },
+  {
+    "id": "S3",
+    "name": "Олена Бондар",
+    "gpa": 80.0,
+    "passedCourses": 2,
+    "failedCourses": 0,
+    "level": "добре"
+  },
+  {
+    "id": "S4",
+    "name": "Максим Лисенко",
+    "gpa": 68.0,
+    "passedCourses": 1,
+    "failedCourses": 0,
+    "level": "задовільно"
+  },
+  {
+    "id": "S5",
+    "name": "Дарина Савчук",
+    "gpa": 96.0,
+    "passedCourses": 3,
+    "failedCourses": 0,
+    "level": "відмінно"
+  },
+  {
+    "id": "S6",
+    "name": "Тарас Гриценко",
+    "gpa": 74.5,
+    "passedCourses": 2,
+    "failedCourses": 0,
+    "level": "задовільно"
+  },
+  {
+    "id": "S7",
+    "name": "Софія Ткачук",
+    "gpa": 61.0,
+    "passedCourses": 1,
+    "failedCourses": 1,
+    "level": "задовільно"
+  },
+  {
+    "id": "S8",
+    "name": "Богдан Кравець",
+    "gpa": 48.0,
+    "passedCourses": 0,
+    "failedCourses": 1,
+    "level": "ризик відрахування"
+  },
+  {
+    "id": "S9",
+    "name": "Юлія Шевчук",
+    "gpa": 81.0,
+    "passedCourses": 3,
+    "failedCourses": 0,
+    "level": "добре"
+  },
+  {
+    "id": "S10",
+    "name": "Назар Попович",
+    "gpa": 64.0,
+    "passedCourses": 1,
+    "failedCourses": 1,
+    "level": "задовільно"
+  }
+]
