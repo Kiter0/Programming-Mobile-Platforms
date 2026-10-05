@@ -6,6 +6,7 @@ import 'package:dart_basics_rudenko/utils/async_file_processor.dart';
 import 'package:dart_basics_rudenko/utils/calculator.dart';
 import 'package:dart_basics_rudenko/utils/csv_loader.dart';
 import 'package:dart_basics_rudenko/utils/data_processor.dart';
+import 'package:dart_basics_rudenko/utils/math_utils.dart';
 import 'package:dart_basics_rudenko/utils/text_analyzer.dart';
 import 'package:test/test.dart';
 
@@ -180,6 +181,29 @@ S2,Іван,Мельник,2004-11-02,,C1:55
     test('некоректна оцінка кидає FormatException', () {
       const broken = 'header\nS1,Анна,Коваль,2005-03-14,dart,C1-90';
       expect(() => CsvLoader.parseStudents(broken), throwsFormatException);
+    });
+  });
+
+    group('FibonacciCalculator', () {
+    const expected = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
+
+    test('усі три реалізації дають правильні перші числа', () {
+      for (var n = 0; n < expected.length; n++) {
+        expect(FibonacciCalculator.recursive(n), expected[n]);
+        expect(FibonacciCalculator.memoized(n), expected[n]);
+        expect(FibonacciCalculator.iterative(n), expected[n]);
+      }
+    });
+
+    test('memoized та iterative збігаються для великого n', () {
+      expect(FibonacciCalculator.memoized(50), 12586269025);
+      expect(FibonacciCalculator.iterative(50), 12586269025);
+    });
+
+    test('від\'ємне або надто велике n кидає ArgumentError', () {
+      expect(() => FibonacciCalculator.recursive(-1), throwsArgumentError);
+      expect(() => FibonacciCalculator.memoized(-1), throwsArgumentError);
+      expect(() => FibonacciCalculator.iterative(93), throwsArgumentError);
     });
   });
 
