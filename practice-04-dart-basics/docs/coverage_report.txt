@@ -1,0 +1,12 @@
+=== Звіт про покриття коду тестами ===
+ 100.0%  (8/8)  D:\Flutter projects\Programming-Mobile-Platforms\practice-04-dart-basics\lib\models\person.dart
+  93.3%  (42/45)  D:\Flutter projects\Programming-Mobile-Platforms\practice-04-dart-basics\lib\models\student.dart
+  85.9%  (61/71)  D:\Flutter projects\Programming-Mobile-Platforms\practice-04-dart-basics\lib\models\university.dart
+  63.6%  (7/11)  D:\Flutter projects\Programming-Mobile-Platforms\practice-04-dart-basics\lib\models\course.dart
+ 100.0%  (37/37)  D:\Flutter projects\Programming-Mobile-Platforms\practice-04-dart-basics\lib\utils\async_file_processor.dart
+ 100.0%  (26/26)  D:\Flutter projects\Programming-Mobile-Platforms\practice-04-dart-basics\lib\utils\calculator.dart
+ 100.0%  (25/25)  D:\Flutter projects\Programming-Mobile-Platforms\practice-04-dart-basics\lib\utils\csv_loader.dart
+  98.1%  (53/54)  D:\Flutter projects\Programming-Mobile-Platforms\practice-04-dart-basics\lib\utils\data_processor.dart
+ 100.0%  (33/33)  D:\Flutter projects\Programming-Mobile-Platforms\practice-04-dart-basics\lib\utils\text_analyzer.dart
+--------------------------------------------------
+ЗАГАЛОМ: 94.2% (292 з 310 рядків)
