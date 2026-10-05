@@ -1,18 +1,16 @@
+import 'person.dart';
+
 /// Студент університету
-class Student {
-  final String id;
-  final String firstName;
-  final String lastName;
-  final DateTime birthDate;
+class Student extends Person {
   final List<String> enrolledCourses;
   final Map<String, double> grades; // id курсу -> оцінка (0-100)
   final List<String> skills;
 
-  Student({
-    required this.id,
-    required this.firstName,
-    required this.lastName,
-    required this.birthDate,
+    Student({
+    required super.id,
+    required super.firstName,
+    required super.lastName,
+    required super.birthDate,
     List<String>? enrolledCourses,
     Map<String, double>? grades,
     List<String>? skills,
@@ -20,21 +18,9 @@ class Student {
         grades = grades ?? {},
         skills = skills ?? [];
 
+  @override
+  String get role => 'Student'; 
   //  Getters 
-
-  String get fullName => '$firstName $lastName';
-
-  int get age {
-    final now = DateTime.now();
-    int years = now.year - birthDate.year;
-    // якщо день народження цього року ще не настав, віднімаємо рік
-    final hadBirthday = now.month > birthDate.month ||
-        (now.month == birthDate.month && now.day >= birthDate.day);
-    if (!hadBirthday) {
-      years--;
-    }
-    return years;
-  }
 
   /// Середня оцінка за 100-бальною шкалою (0, якщо оцінок ще немає)
   double get gpa {
