@@ -50,3 +50,9 @@
 ## Примітка про `dispose()`
 
 У цьому варіанті немає об'єктів, які потрібно звільняти вручну (`TextEditingController`, `AnimationController`, `ScrollController` тощо), тому перевизначати метод `dispose()` не потрібно. Єдиний `State` у проєкті (`_BusinessCardAppState`) зберігає лише значення `ThemeMode`, яке не потребує очищення.
+
+**Для чого використовувався ШІ:**
+- пояснення базових понять Flutter (`StatelessWidget`, `StatefulWidget`, `setState`, `Theme.of(context)`, Hot Reload і Hot Restart);
+- підготовка початкової версії коду застосунку (`main.dart`, `home_screen.dart`, `contact_card.dart`);
+- допомога з налаштуванням середовища та пошуком причин помилок (місце для емулятора, NDK, шляхи імпортів, робота з Git і GitHub);
+- допомога зі структурою та формулюваннями README.
