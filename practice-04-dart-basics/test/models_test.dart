@@ -99,6 +99,12 @@ void main() {
       expect(student.enrolledCourses, isEmpty);
       expect(student.skills, isEmpty);
     });
+
+    test('toString містить імʼя та GPA', () {
+      final text = makeStudent().toString();
+      expect(text, contains('Анна Коваль'));
+      expect(text, contains('GPA: 0.0'));
+    });
   });
 
   group('Course', () {
@@ -128,6 +134,12 @@ void main() {
       final student = makeStudent(courses: ['C1']);
       expect(makeCourse('C1').canStudentEnroll(student), isFalse);
     });
+
+    test('toString показує передумови або "немає"', () {
+      expect(makeCourse('C1').toString(), contains('передумови: немає'));
+      expect(makeCourse('C2', prerequisites: ['C1']).toString(),
+          contains('передумови: C1'));
+    });
   });
 
   group('Person, Professor і поліморфізм', () {
@@ -149,6 +161,12 @@ void main() {
       final List<Person> people = [makeStudent(), makeProfessor()];
       expect(people.map((p) => p.role), ['Student', 'Professor']);
       expect(people.every((p) => p.fullName.isNotEmpty), isTrue);
+    });
+
+    test('Professor.toString містить імʼя та кафедру', () {
+      final text = makeProfessor().toString();
+      expect(text, contains('Олег Петренко'));
+      expect(text, contains('Інформатика'));
     });
   });
 
@@ -182,6 +200,22 @@ void main() {
       expect(() => university.removeStudent('S1'), throwsArgumentError);
     });
 
+    test('addProfessor додає викладача та відхиляє дублікат id', () {
+      university.addProfessor(makeProfessor());
+      expect(university.professors.length, 1);
+      expect(() => university.addProfessor(makeProfessor()),
+          throwsArgumentError);
+    });
+
+    test('addCourse відхиляє дублікат id', () {
+      expect(() => university.addCourse(makeCourse('C1')), throwsArgumentError);
+    });
+
+    test('findCourseById знаходить курс або повертає null', () {
+      expect(university.findCourseById('C2')?.name, 'Курс C2');
+      expect(university.findCourseById('C404'), isNull);
+    });
+
     test('enrollStudent записує студента на курс', () {
       university.enrollStudent('S1', 'C1');
       expect(university.findStudentById('S1')!.enrolledCourses, ['C1']);
@@ -212,6 +246,18 @@ void main() {
     test('getAvailableCoursesForStudent враховує передумови', () {
       final available = university.getAvailableCoursesForStudent('S1');
       expect(available.map((c) => c.id), ['C1']);
+    });
+
+    test('getAvailableCoursesForStudent кидає ArgumentError для невідомого id',
+        () {
+      expect(() => university.getAvailableCoursesForStudent('S404'),
+          throwsArgumentError);
+    });
+
+    test('allPeople обʼєднує студентів і викладачів', () {
+      university.addProfessor(makeProfessor());
+      expect(university.allPeople.map((p) => p.role),
+          ['Student', 'Student', 'Professor']);
     });
 
     test('generateStatistics рахує кількості, середній GPA і найкращого', () {

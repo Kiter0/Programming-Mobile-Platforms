@@ -18,15 +18,20 @@ void main() {
 
   for (final line in file.readAsLinesSync()) {
     if (line.startsWith('SF:')) {
-      current = line.substring(3); // шлях до файлу
+      current = line
+          .substring(3)
+          .replaceFirst(Directory.current.path, '')
+          .replaceFirst(RegExp(r'^[\\/]+'), ''); // шлях до файлу
     } else if (line.startsWith('LF:')) {
       found = int.parse(line.substring(3)); // усього рядків коду
     } else if (line.startsWith('LH:')) {
       hit = int.parse(line.substring(3)); // рядків, виконаних тестами
     } else if (line == 'end_of_record' && current != null) {
       final percent = found == 0 ? 100.0 : hit / found * 100;
-      report.writeln('${percent.toStringAsFixed(1).padLeft(6)}%  '
-          '($hit/$found)  $current');
+      report.writeln(
+        '${percent.toStringAsFixed(1).padLeft(6)}%  '
+        '($hit/$found)  $current',
+      );
       totalFound += found;
       totalHit += hit;
     }
@@ -34,8 +39,10 @@ void main() {
 
   final totalPercent = totalFound == 0 ? 100.0 : totalHit / totalFound * 100;
   report.writeln('-' * 50);
-  report.writeln('ЗАГАЛОМ: ${totalPercent.toStringAsFixed(1)}% '
-      '($totalHit з $totalFound рядків)');
+  report.writeln(
+    'ЗАГАЛОМ: ${totalPercent.toStringAsFixed(1)}% '
+    '($totalHit з $totalFound рядків)',
+  );
 
   print(report);
   Directory('docs').createSync(recursive: true);
