@@ -17,7 +17,8 @@ class CsvLoader {
       final parts = line.split(',');
       if (parts.length != 6) {
         throw FormatException(
-            'Очікувалось 6 колонок, а знайдено ${parts.length}: $line');
+          'Очікувалось 6 колонок, а знайдено ${parts.length}: $line',
+        );
       }
 
       final grades = <String, double>{};
@@ -31,16 +32,18 @@ class CsvLoader {
         }
       }
 
-      students.add(Student(
-        id: parts[0],
-        firstName: parts[1],
-        lastName: parts[2],
-        birthDate: DateTime.parse(parts[3]),
-        skills: parts[4].isEmpty ? [] : parts[4].split(';'),
-        // записаним вважаємо студента на кожен курс, за який є оцінка
-        enrolledCourses: grades.keys.toList(),
-        grades: grades,
-      ));
+      students.add(
+        Student(
+          id: parts[0],
+          firstName: parts[1],
+          lastName: parts[2],
+          birthDate: DateTime.parse(parts[3]),
+          skills: parts[4].isEmpty ? [] : parts[4].split(';'),
+          // записаним вважаємо студента на кожен курс, за який є оцінка
+          enrolledCourses: grades.keys.toList(),
+          grades: grades,
+        ),
+      );
     }
     return students;
   }

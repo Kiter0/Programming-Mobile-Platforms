@@ -33,7 +33,7 @@ void main() {
   say('=== Бенчмарки продуктивності ===');
   say('Час залежить від комп\'ютера. Режим: dart run (JIT).');
 
-  //  1. Фібоначчі 
+  //  1. Фібоначчі
   say('\n--- 1. fibonacci(30): рекурсія, мемоїзація, цикл ---');
   const n = 30;
   final values = {
@@ -41,19 +41,31 @@ void main() {
     FibonacciCalculator.memoized(n),
     FibonacciCalculator.iterative(n),
   };
-  say('Результати збігаються: ${values.length == 1} (значення ${values.first})');
+  say(
+    'Результати збігаються: ${values.length == 1} (значення ${values.first})',
+  );
 
-  final recursiveTime =
-      measure(() => sink += FibonacciCalculator.recursive(n), runs: 3);
-  final memoTime =
-      measure(() => sink += FibonacciCalculator.memoized(n), runs: 1000);
-  final iterTime =
-      measure(() => sink += FibonacciCalculator.iterative(n), runs: 1000);
+  final recursiveTime = measure(
+    () => sink += FibonacciCalculator.recursive(n),
+    runs: 3,
+  );
+  final memoTime = measure(
+    () => sink += FibonacciCalculator.memoized(n),
+    runs: 1000,
+  );
+  final iterTime = measure(
+    () => sink += FibonacciCalculator.iterative(n),
+    runs: 1000,
+  );
   say('Наївна рекурсія: ${formatTime(recursiveTime)}');
-  say('Мемоїзація:      ${formatTime(memoTime)} '
-      '(швидше в ${(recursiveTime / memoTime).toStringAsFixed(0)} разів)');
-  say('Цикл:            ${formatTime(iterTime)} '
-      '(швидше в ${(recursiveTime / iterTime).toStringAsFixed(0)} разів)');
+  say(
+    'Мемоїзація:      ${formatTime(memoTime)} '
+    '(швидше в ${(recursiveTime / memoTime).toStringAsFixed(0)} разів)',
+  );
+  say(
+    'Цикл:            ${formatTime(iterTime)} '
+    '(швидше в ${(recursiveTime / iterTime).toStringAsFixed(0)} разів)',
+  );
 
   //  2. Пошук студента \
   say('\n--- 2. Пошук студента за id серед 5000: List чи Map ---');
@@ -85,12 +97,16 @@ void main() {
   });
   say('List.firstWhere, 500 пошуків: ${formatTime(listTime)}');
   say('Map: побудова індексу (1 раз): ${formatTime(buildTime)}');
-  say('Map: 500 пошуків:              ${formatTime(lookupTime)} '
-      '(швидше в ${(listTime / lookupTime).toStringAsFixed(0)} разів)');
-  say('Висновок: індекс окупається, коли пошуків багато. Для одного '
-      'пошуку лінійний прохід простіший і дешевший.');
+  say(
+    'Map: 500 пошуків:              ${formatTime(lookupTime)} '
+    '(швидше в ${(listTime / lookupTime).toStringAsFixed(0)} разів)',
+  );
+  say(
+    'Висновок: індекс окупається, коли пошуків багато. Для одного '
+    'пошуку лінійний прохід простіший і дешевший.',
+  );
 
-  //  3. Рядки 
+  //  3. Рядки
   say('\n--- 3. Склеювання 20000 рядків: += чи StringBuffer ---');
   final plusTime = measure(() {
     var text = '';
@@ -107,8 +123,10 @@ void main() {
     sink += buffer.length;
   });
   say('Оператор +=:   ${formatTime(plusTime)}');
-  say('StringBuffer:  ${formatTime(bufferTime)} '
-      '(швидше в ${(plusTime / bufferTime).toStringAsFixed(1)} разів)');
+  say(
+    'StringBuffer:  ${formatTime(bufferTime)} '
+    '(швидше в ${(plusTime / bufferTime).toStringAsFixed(1)} разів)',
+  );
 
   Directory('docs').createSync(recursive: true);
   File('docs/benchmark_report.txt').writeAsStringSync(_report.toString());

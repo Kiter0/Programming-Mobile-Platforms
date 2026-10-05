@@ -5,14 +5,14 @@ import '../models/student.dart';
 
 /// Асинхронний обробник файлів: читання JSON -> обробка -> запис результатів
 class AsyncFileProcessor {
-  /// Імітація "важкої" обробки одного студента 
+  /// Імітація "важкої" обробки одного студента
   final Duration processingDelay;
 
   AsyncFileProcessor({
     this.processingDelay = const Duration(milliseconds: 100),
   });
 
-  //  Read 
+  //  Read
 
   Future<List<Student>> readStudents(String path) async {
     final file = File(path);
@@ -53,7 +53,8 @@ class AsyncFileProcessor {
 
   /// По одному: кожен студент чекає завершення попереднього
   Future<List<Map<String, dynamic>>> processSequential(
-      List<Student> students) async {
+    List<Student> students,
+  ) async {
     final results = <Map<String, dynamic>>[];
     for (final student in students) {
       results.add(await processStudent(student));
@@ -80,10 +81,12 @@ class AsyncFileProcessor {
     return results;
   }
 
-  //  Write 
+  //  Write
 
   Future<void> writeResults(
-      List<Map<String, dynamic>> results, String path) async {
+    List<Map<String, dynamic>> results,
+    String path,
+  ) async {
     final file = File(path);
     await file.parent.create(recursive: true);
     const encoder = JsonEncoder.withIndent('  ');

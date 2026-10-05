@@ -54,14 +54,14 @@ class University {
     List<Student>? students,
     List<Professor>? professors,
     List<Course>? courses,
-  })  : students = students ?? [],
-        professors = professors ?? [],
-        courses = courses ?? [];
+  }) : students = students ?? [],
+       professors = professors ?? [],
+       courses = courses ?? [];
 
   /// Усі люди університету в одному списку (основа для поліморфізму)
   List<Person> get allPeople => [...students, ...professors];
 
-  // CRUD: студенти 
+  // CRUD: студенти
 
   void addStudent(Student student) {
     if (findStudentById(student.id) != null) {
@@ -87,7 +87,7 @@ class University {
     return null;
   }
 
-  //  Викладачі та курси 
+  //  Викладачі та курси
 
   void addProfessor(Professor professor) {
     if (professors.any((p) => p.id == professor.id)) {
@@ -112,7 +112,7 @@ class University {
     return null;
   }
 
-  //  Бізнес-логіка 
+  //  Бізнес-логіка
 
   /// Записує студента на курс, лише якщо виконані всі передумови
   void enrollStudent(String studentId, String courseId) {
@@ -126,15 +126,14 @@ class University {
     }
     if (!course.canStudentEnroll(student)) {
       throw StateError(
-          '${student.fullName} не може записатися на "${course.name}"');
+        '${student.fullName} не може записатися на "${course.name}"',
+      );
     }
     student.enrollInCourse(courseId);
   }
 
   List<Student> getStudentsByCourse(String courseId) {
-    return students
-        .where((s) => s.enrolledCourses.contains(courseId))
-        .toList();
+    return students.where((s) => s.enrolledCourses.contains(courseId)).toList();
   }
 
   List<Course> getAvailableCoursesForStudent(String studentId) {
@@ -162,8 +161,10 @@ class University {
       'studentsCount': students.length,
       'professorsCount': professors.length,
       'coursesCount': courses.length,
-      'enrollmentsTotal':
-          students.fold<int>(0, (sum, s) => sum + s.enrolledCourses.length),
+      'enrollmentsTotal': students.fold<int>(
+        0,
+        (sum, s) => sum + s.enrolledCourses.length,
+      ),
       'averageGpa': double.parse(averageGpa.toStringAsFixed(2)),
       'topStudent': top?.fullName ?? '—',
     };

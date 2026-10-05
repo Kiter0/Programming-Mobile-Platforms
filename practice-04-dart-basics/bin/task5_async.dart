@@ -12,7 +12,7 @@ void main() async {
   await demonstrateFileOperations();
 }
 
-//  Асинхронні функції 
+//  Асинхронні функції
 
 /// Імітація запиту до сервера: відповідь приходить через 1 секунду
 Future<String> fetchStudentData(String studentId) async {
@@ -152,8 +152,8 @@ Future<void> demonstrateStreams() async {
   final firstTwo = await studentStream().take(2).map((s) => s.id).toList();
   print('take(2): $firstTwo');
 
-  final total =
-      await studentStream(count: 4).fold<double>(0, (sum, s) => sum + s.gpa);
+  final total = await studentStream(count: 4)
+      .fold<double>(0, (sum, s) => sum + s.gpa);
   print('Сума GPA перших чотирьох: $total');
 }
 
@@ -165,8 +165,10 @@ Future<void> demonstrateFileOperations() async {
 
   // 1. Читаємо CSV асинхронно
   final students = CsvLoader.parseStudents(await File(csvPath).readAsString());
-  print('Прочитано з CSV: ${students.length} студентів '
-      '(${stopwatch.elapsedMilliseconds} мс)');
+  print(
+    'Прочитано з CSV: ${students.length} студентів '
+    '(${stopwatch.elapsedMilliseconds} мс)',
+  );
 
   // 2. Зберігаємо у JSON
   stopwatch.reset();
@@ -176,8 +178,10 @@ Future<void> demonstrateFileOperations() async {
   // 3. Читаємо JSON назад і перевіряємо, що дані не втрачені
   stopwatch.reset();
   final loaded = await loadStudentsFromFile(jsonPath);
-  print('Завантажено з JSON: ${loaded.length} студентів '
-      '(${stopwatch.elapsedMilliseconds} мс)');
+  print(
+    'Завантажено з JSON: ${loaded.length} студентів '
+    '(${stopwatch.elapsedMilliseconds} мс)',
+  );
   print('Перший після завантаження: ${loaded.first}');
 
   // 4. Потокове читання: файл береться частинами, а не весь одразу
@@ -216,8 +220,10 @@ Future<void> demonstrateFileOperations() async {
   stopwatch.reset();
   final bigLoaded = await loadStudentsFromFile(bigPath);
   final loadMs = stopwatch.elapsedMilliseconds;
-  print('5000 студентів: запис $saveMs мс, читання $loadMs мс '
-      '(перевірка: ${bigLoaded.length})');
+  print(
+    '5000 студентів: запис $saveMs мс, читання $loadMs мс '
+    '(перевірка: ${bigLoaded.length})',
+  );
 
   // Порівняння: 5 читань файлу послідовно та паралельно
   stopwatch.reset();

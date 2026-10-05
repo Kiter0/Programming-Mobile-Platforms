@@ -19,15 +19,17 @@ class DataProcessor {
     final sorted = List<Student>.from(students)
       ..sort((a, b) => b.gpa.compareTo(a.gpa));
     return sorted
-        .map((s) => {
-              'id': s.id,
-              'name': s.fullName,
-              'gpa': double.parse(s.gpa.toStringAsFixed(2)),
-            })
+        .map(
+          (s) => {
+            'id': s.id,
+            'name': s.fullName,
+            'gpa': double.parse(s.gpa.toStringAsFixed(2)),
+          },
+        )
         .toList();
   }
 
-  //  Робота з множинами (Set) 
+  //  Робота з множинами (Set)
 
   /// Усі різні навички всіх студентів
   static Set<String> getUniqueSkills(List<Student> students) {
@@ -46,11 +48,12 @@ class DataProcessor {
     return common;
   }
 
-  //  Робота з відображеннями (Map) 
+  //  Робота з відображеннями (Map)
 
   /// Групування за роком народження
   static Map<String, List<Student>> groupStudentsByYear(
-      List<Student> students) {
+    List<Student> students,
+  ) {
     final groups = <String, List<Student>>{};
     for (final student in students) {
       final year = student.birthDate.year.toString();
@@ -61,20 +64,26 @@ class DataProcessor {
 
   /// Середня оцінка за кожним курсом
   static Map<String, double> calculateAverageGradesByCourse(
-      List<Student> students) {
+    List<Student> students,
+  ) {
     final sums = <String, double>{};
     final counts = <String, int>{};
     for (final student in students) {
       for (final entry in student.grades.entries) {
-        sums.update(entry.key, (sum) => sum + entry.value,
-            ifAbsent: () => entry.value);
+        sums.update(
+          entry.key,
+          (sum) => sum + entry.value,
+          ifAbsent: () => entry.value,
+        );
         counts.update(entry.key, (count) => count + 1, ifAbsent: () => 1);
       }
     }
-    return sums.map((courseId, sum) => MapEntry(courseId, sum / counts[courseId]!));
+    return sums.map(
+      (courseId, sum) => MapEntry(courseId, sum / counts[courseId]!),
+    );
   }
 
-  //  Складна обробка 
+  //  Складна обробка
 
   /// Звіт по кожному курсу університету, найкращі середні оцінки зверху
   static List<Map<String, dynamic>> generateReport(University university) {
@@ -104,8 +113,10 @@ class DataProcessor {
       });
     }
 
-    report.sort((a, b) =>
-        (b['averageGrade'] as double).compareTo(a['averageGrade'] as double));
+    report.sort(
+      (a, b) =>
+          (b['averageGrade'] as double).compareTo(a['averageGrade'] as double),
+    );
     return report;
   }
 }

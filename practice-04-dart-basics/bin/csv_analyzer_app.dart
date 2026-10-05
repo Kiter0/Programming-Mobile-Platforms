@@ -24,7 +24,7 @@ void main() {
     return;
   }
 
-  //  Вхід 
+  //  Вхід
   final stopwatch = Stopwatch()..start();
   final List<Student> students;
   try {
@@ -39,7 +39,7 @@ void main() {
   say('=== Аналіз даних студентів (джерело: $inputPath) ===');
   say('Завантажено студентів: ${students.length}');
 
-  //  Обробка та вивід 
+  //  Обробка та вивід
   say('\n--- Рейтинг за GPA ---');
   final ranking = DataProcessor.sortStudentsByGPA(students);
   for (var i = 0; i < ranking.length; i++) {
@@ -58,12 +58,12 @@ void main() {
     final key = grade < 60
         ? '0-59'
         : grade < 70
-            ? '60-69'
-            : grade < 80
-                ? '70-79'
-                : grade < 90
-                    ? '80-89'
-                    : '90-100';
+        ? '60-69'
+        : grade < 80
+        ? '70-79'
+        : grade < 90
+        ? '80-89'
+        : '90-100';
     buckets[key] = buckets[key]! + 1;
   }
   buckets.forEach((range, count) {
@@ -98,8 +98,9 @@ void main() {
   }
 
   say('\n--- Студенти з несданими курсами (оцінка < 60) ---');
-  final atRisk =
-      students.where((s) => s.grades.values.any((g) => g < 60)).toList();
+  final atRisk = students
+      .where((s) => s.grades.values.any((g) => g < 60))
+      .toList();
   if (atRisk.isEmpty) {
     say('Таких немає');
   } else {
@@ -118,47 +119,55 @@ void main() {
     students: students,
     courses: [
       Course(
-          id: 'C1',
-          name: 'Основи програмування',
-          description: '',
-          credits: 5,
-          instructor: 'Петренко'),
+        id: 'C1',
+        name: 'Основи програмування',
+        description: '',
+        credits: 5,
+        instructor: 'Петренко',
+      ),
       Course(
-          id: 'C2',
-          name: 'Мобільна розробка',
-          description: '',
-          credits: 6,
-          instructor: 'Шевченко'),
+        id: 'C2',
+        name: 'Мобільна розробка',
+        description: '',
+        credits: 6,
+        instructor: 'Шевченко',
+      ),
       Course(
-          id: 'C3',
-          name: 'Бази даних',
-          description: '',
-          credits: 4,
-          instructor: 'Петренко'),
+        id: 'C3',
+        name: 'Бази даних',
+        description: '',
+        credits: 4,
+        instructor: 'Петренко',
+      ),
       Course(
-          id: 'C4',
-          name: 'Flutter-практикум',
-          description: '',
-          credits: 5,
-          instructor: 'Шевченко'),
+        id: 'C4',
+        name: 'Flutter-практикум',
+        description: '',
+        credits: 5,
+        instructor: 'Шевченко',
+      ),
     ],
   );
   for (final row in DataProcessor.generateReport(university)) {
-    say('${row['courseId']} ${row['courseName']}: '
-        'записано ${row['enrolled']}, середня ${row['averageGrade']}, '
-        'склали ${row['passRate']}%');
+    say(
+      '${row['courseId']} ${row['courseName']}: '
+      'записано ${row['enrolled']}, середня ${row['averageGrade']}, '
+      'склали ${row['passRate']}%',
+    );
   }
 
-  say('\nСпільні курси всіх студентів: '
-      '${DataProcessor.findCommonCourses(students)}');
+  say(
+    '\nСпільні курси всіх студентів: '
+    '${DataProcessor.findCommonCourses(students)}',
+  );
 
-  //  Продуктивність 
+  //  Продуктивність
   final processMicros = stopwatch.elapsedMicroseconds;
   say('\n--- Продуктивність ---');
   say('Читання та розбір CSV: $loadMicros мкс');
   say('Обробка та формування звіту (з виводом): $processMicros мкс');
 
-  // Вихід у файл 
+  // Вихід у файл
   Directory('output').createSync(recursive: true);
   File(outputPath).writeAsStringSync(_report.toString());
   print('\nЗвіт збережено: $outputPath');

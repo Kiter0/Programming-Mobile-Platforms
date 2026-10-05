@@ -17,7 +17,8 @@ abstract class Person {
   int get age {
     final now = DateTime.now();
     int years = now.year - birthDate.year;
-    final hadBirthday = now.month > birthDate.month ||
+    final hadBirthday =
+        now.month > birthDate.month ||
         (now.month == birthDate.month && now.day >= birthDate.day);
     if (!hadBirthday) {
       years--;

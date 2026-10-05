@@ -6,7 +6,7 @@ class Student extends Person {
   final Map<String, double> grades; // id курсу -> оцінка (0-100)
   final List<String> skills;
 
-    Student({
+  Student({
     required super.id,
     required super.firstName,
     required super.lastName,
@@ -14,13 +14,13 @@ class Student extends Person {
     List<String>? enrolledCourses,
     Map<String, double>? grades,
     List<String>? skills,
-  })  : enrolledCourses = enrolledCourses ?? [],
-        grades = grades ?? {},
-        skills = skills ?? [];
+  }) : enrolledCourses = enrolledCourses ?? [],
+       grades = grades ?? {},
+       skills = skills ?? [];
 
   @override
-  String get role => 'Student'; 
-  //  Getters 
+  String get role => 'Student';
+  //  Getters
 
   /// Середня оцінка за 100-бальною шкалою (0, якщо оцінок ще немає)
   double get gpa {
@@ -31,7 +31,7 @@ class Student extends Person {
     return sum / grades.length;
   }
 
-  //  Methods 
+  //  Methods
 
   void enrollInCourse(String courseId) {
     if (!enrolledCourses.contains(courseId)) {
@@ -81,10 +81,13 @@ class Student extends Person {
       firstName: json['firstName'] as String,
       lastName: json['lastName'] as String,
       birthDate: DateTime.parse(json['birthDate'] as String),
-      enrolledCourses: List<String>.from(json['enrolledCourses'] as List? ?? []),
+      enrolledCourses: List<String>.from(
+        json['enrolledCourses'] as List? ?? [],
+      ),
       // у JSON числа можуть бути int або double, тому через num
-      grades: (json['grades'] as Map<String, dynamic>? ?? {})
-          .map((key, value) => MapEntry(key, (value as num).toDouble())),
+      grades: (json['grades'] as Map<String, dynamic>? ?? {}).map(
+        (key, value) => MapEntry(key, (value as num).toDouble()),
+      ),
       skills: List<String>.from(json['skills'] as List? ?? []),
     );
   }

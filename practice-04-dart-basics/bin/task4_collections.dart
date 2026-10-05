@@ -25,10 +25,14 @@ void demonstrateLists() {
   print('map (x2): ${numbers.map((n) => n * 2).toList()}');
   print('fold (сума): ${numbers.fold<int>(0, (acc, n) => acc + n)}');
   print('reduce (максимум): ${numbers.reduce((a, b) => a > b ? a : b)}');
-  print('take(3): ${numbers.take(3).toList()}, '
-      'skip(5): ${numbers.skip(5).toList()}');
-  print('any (> 17): ${numbers.any((n) => n > 17)}, '
-      'every (> 0): ${numbers.every((n) => n > 0)}');
+  print(
+    'take(3): ${numbers.take(3).toList()}, '
+    'skip(5): ${numbers.skip(5).toList()}',
+  );
+  print(
+    'any (> 17): ${numbers.any((n) => n > 17)}, '
+    'every (> 0): ${numbers.every((n) => n > 0)}',
+  );
   print('firstWhere (> 10): ${numbers.firstWhere((n) => n > 10)}');
   print('indexOf(18): ${numbers.indexOf(18)}');
   print('generate (квадрати): ${List.generate(5, (i) => i * i)}');
@@ -49,7 +53,7 @@ void demonstrateSets() {
   print('Містить flutter: ${frontend.contains('flutter')}');
   print('Містить dart і css: ${frontend.containsAll({'dart', 'css'})}');
 
-    // Найпростіший спосіб прибрати дублікати зі списку
+  // Найпростіший спосіб прибрати дублікати зі списку
   final withDuplicates = [1, 2, 2, 3, 3, 3];
   final unique = withDuplicates.toSet();
   print('Список: $withDuplicates, унікальні: $unique');
@@ -67,8 +71,9 @@ void demonstrateMaps() {
   print('Є яблука: ${stock.containsKey('яблука')}');
 
   // map перетворює кожну пару, Map.fromEntries збирає нову Map із відфільтрованих
-  final labels =
-      stock.map((key, value) => MapEntry(key, value >= 10 ? 'багато' : 'мало'));
+  final labels = stock.map(
+    (key, value) => MapEntry(key, value >= 10 ? 'багато' : 'мало'),
+  );
   print('Позначки: $labels');
   final many = Map.fromEntries(stock.entries.where((e) => e.value >= 10));
   print('Де >= 10: $many');
@@ -81,8 +86,10 @@ void demonstrateMaps() {
     print('  ${entry.key}: ${entry.value}');
   }
 
-  print('Частота слів: '
-      '${DataProcessor.countWords('Dart це Dart і Flutter це Dart')}');
+  print(
+    'Частота слів: '
+    '${DataProcessor.countWords('Dart це Dart і Flutter це Dart')}',
+  );
 }
 
 /// Повертає запис (record): кращого та гіршого студента за GPA
@@ -138,8 +145,10 @@ void demonstrateAdvancedOperations() {
 
   print('Унікальні навички: ${DataProcessor.getUniqueSkills(students)}');
   print('Спільні курси всіх: ${DataProcessor.findCommonCourses(students)}');
-  print('Спільні курси перших трьох: '
-      '${DataProcessor.findCommonCourses(students.take(3).toList())}');
+  print(
+    'Спільні курси перших трьох: '
+    '${DataProcessor.findCommonCourses(students.take(3).toList())}',
+  );
 
   print('За роком народження:');
   DataProcessor.groupStudentsByYear(students).forEach((year, group) {
@@ -149,16 +158,17 @@ void demonstrateAdvancedOperations() {
   print('Середні оцінки за курсами:');
   DataProcessor.calculateAverageGradesByCourse(students)
       .forEach((courseId, average) {
-    print('  $courseId: ${average.toStringAsFixed(1)}');
-  });
+        print('  $courseId: ${average.toStringAsFixed(1)}');
+      });
 
   // Вкладені колекції: Map, де значення є списком Map
   final byCourse = <String, List<Map<String, dynamic>>>{};
   for (final student in students) {
     for (final entry in student.grades.entries) {
-      byCourse
-          .putIfAbsent(entry.key, () => [])
-          .add({'student': student.fullName, 'grade': entry.value});
+      byCourse.putIfAbsent(entry.key, () => []).add({
+        'student': student.fullName,
+        'grade': entry.value,
+      });
     }
   }
   print('Оцінки за курсами (від найвищої):');
@@ -170,18 +180,22 @@ void demonstrateAdvancedOperations() {
 
   // Власне сортування за двома ключами: спершу за кількістю складених курсів,
   // а за рівності за прізвищем
-  final custom = [...students]..sort((a, b) {
-      final byPassed =
-          b.getPassedCourses().length.compareTo(a.getPassedCourses().length);
+  final custom = [...students]
+    ..sort((a, b) {
+      final byPassed = b.getPassedCourses().length.compareTo(
+        a.getPassedCourses().length,
+      );
       return byPassed != 0 ? byPassed : a.lastName.compareTo(b.lastName);
     });
-  print('За кількістю складених курсів: '
-      '${custom.map((s) => s.lastName).toList()}');
+  print(
+    'За кількістю складених курсів: '
+    '${custom.map((s) => s.lastName).toList()}',
+  );
 
   // collection for + collection if (Dart 3)
   final strong = [
     for (final s in students)
-      if (s.gpa >= 80) s.fullName
+      if (s.gpa >= 80) s.fullName,
   ];
   print('Студенти з GPA >= 80: $strong');
 

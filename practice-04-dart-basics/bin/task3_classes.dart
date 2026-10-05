@@ -72,36 +72,44 @@ void runUniversityDemo() {
 
   // 3. Створюємо курси
   printSection('3. Курси');
-  university.addCourse(Course(
-    id: 'C1',
-    name: 'Основи програмування',
-    description: 'Вступний курс',
-    credits: 5,
-    instructor: petrenko.fullName,
-  ));
-  university.addCourse(Course(
-    id: 'C2',
-    name: 'Мобільна розробка',
-    description: 'Flutter та Dart',
-    credits: 6,
-    instructor: shevchenko.fullName,
-    prerequisites: ['C1'],
-  ));
-  university.addCourse(Course(
-    id: 'C3',
-    name: 'Бази даних',
-    description: 'SQL та проєктування',
-    credits: 4,
-    instructor: petrenko.fullName,
-  ));
-  university.addCourse(Course(
-    id: 'C4',
-    name: 'Flutter-практикум',
-    description: 'Проєкт у команді',
-    credits: 5,
-    instructor: shevchenko.fullName,
-    prerequisites: ['C2'],
-  ));
+  university.addCourse(
+    Course(
+      id: 'C1',
+      name: 'Основи програмування',
+      description: 'Вступний курс',
+      credits: 5,
+      instructor: petrenko.fullName,
+    ),
+  );
+  university.addCourse(
+    Course(
+      id: 'C2',
+      name: 'Мобільна розробка',
+      description: 'Flutter та Dart',
+      credits: 6,
+      instructor: shevchenko.fullName,
+      prerequisites: ['C1'],
+    ),
+  );
+  university.addCourse(
+    Course(
+      id: 'C3',
+      name: 'Бази даних',
+      description: 'SQL та проєктування',
+      credits: 4,
+      instructor: petrenko.fullName,
+    ),
+  );
+  university.addCourse(
+    Course(
+      id: 'C4',
+      name: 'Flutter-практикум',
+      description: 'Проєкт у команді',
+      credits: 5,
+      instructor: shevchenko.fullName,
+      prerequisites: ['C2'],
+    ),
+  );
   petrenko
     ..assignCourse('C1')
     ..assignCourse('C3');
@@ -117,8 +125,10 @@ void runUniversityDemo() {
   university.enrollStudent('S2', 'C1');
   university.enrollStudent('S3', 'C1');
   university.enrollStudent('S4', 'C3');
-  print('На C1 записані: '
-      '${university.getStudentsByCourse('C1').map((s) => s.fullName).toList()}');
+  print(
+    'На C1 записані: '
+    '${university.getStudentsByCourse('C1').map((s) => s.fullName).toList()}',
+  );
 
   try {
     university.enrollStudent('S2', 'C2'); // передумова C1 ще не складена
@@ -134,8 +144,10 @@ void runUniversityDemo() {
   olena.addGrade('C1', 82);
   maksym.addGrade('C3', 68);
   for (final student in university.students) {
-    print('${student.fullName}: ${student.grades}, '
-        'склав: ${student.getPassedCourses()}');
+    print(
+      '${student.fullName}: ${student.grades}, '
+      'склав: ${student.getPassedCourses()}',
+    );
   }
 
   printSection('Доступні курси після оцінок');
@@ -149,8 +161,10 @@ void runUniversityDemo() {
 
   university.enrollStudent('S1', 'C2'); // тепер Анна може на C2
   anna.addGrade('C2', 95);
-  print('Після C2 Анні доступні: '
-      '${university.getAvailableCoursesForStudent('S1').map((c) => c.name).toList()}');
+  print(
+    'Після C2 Анні доступні: '
+    '${university.getAvailableCoursesForStudent('S1').map((c) => c.name).toList()}',
+  );
 
   // 6. Статистика
   printSection('6. Статистика');
@@ -165,7 +179,9 @@ void runUniversityDemo() {
     if (person is Student) {
       print('    GPA: ${person.gpa.toStringAsFixed(1)}');
     } else if (person is Professor) {
-      print('    кафедра: ${person.department}, курси: ${person.taughtCourses}');
+      print(
+        '    кафедра: ${person.department}, курси: ${person.taughtCourses}',
+      );
     }
   }
 

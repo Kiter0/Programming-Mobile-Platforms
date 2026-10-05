@@ -51,8 +51,10 @@ void main() {
     });
 
     test('wordFrequency ігнорує регістр', () {
-      expect(TextAnalyzer.wordFrequency('Dart dart DART це'),
-          {'dart': 3, 'це': 1});
+      expect(TextAnalyzer.wordFrequency('Dart dart DART це'), {
+        'dart': 3,
+        'це': 1,
+      });
     });
 
     test('countCharacters з пробілами та без', () {
@@ -87,18 +89,29 @@ void main() {
       expect(DataProcessor.countWords('Dart це dart'), {'dart': 2, 'це': 1});
     });
 
-    test('sortStudentsByGPA сортує за спаданням і не змінює вхідний список', () {
-      final low = makeStudent(
-          id: 'S1', firstName: 'Низький', courses: ['C1'], grades: {'C1': 60});
-      final high = makeStudent(
-          id: 'S2', firstName: 'Високий', courses: ['C1'], grades: {'C1': 95});
-      final input = [low, high];
+    test(
+      'sortStudentsByGPA сортує за спаданням і не змінює вхідний список',
+      () {
+        final low = makeStudent(
+          id: 'S1',
+          firstName: 'Низький',
+          courses: ['C1'],
+          grades: {'C1': 60},
+        );
+        final high = makeStudent(
+          id: 'S2',
+          firstName: 'Високий',
+          courses: ['C1'],
+          grades: {'C1': 95},
+        );
+        final input = [low, high];
 
-      final result = DataProcessor.sortStudentsByGPA(input);
+        final result = DataProcessor.sortStudentsByGPA(input);
 
-      expect(result.map((r) => r['id']), ['S2', 'S1']);
-      expect(input.first.id, 'S1'); // порядок вхідного списку не змінився
-    });
+        expect(result.map((r) => r['id']), ['S2', 'S1']);
+        expect(input.first.id, 'S1'); // порядок вхідного списку не змінився
+      },
+    );
 
     test('getUniqueSkills обʼєднує навички без дублікатів', () {
       final students = [
@@ -184,7 +197,7 @@ S2,Іван,Мельник,2004-11-02,,C1:55
     });
   });
 
-    group('FibonacciCalculator', () {
+  group('FibonacciCalculator', () {
     const expected = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55];
 
     test('усі три реалізації дають правильні перші числа', () {
@@ -212,14 +225,16 @@ S2,Іван,Мельник,2004-11-02,,C1:55
     final processor = AsyncFileProcessor(processingDelay: Duration.zero);
 
     test('processStudent визначає категорію за GPA', () async {
-      final excellent = await processor
-          .processStudent(makeStudent(courses: ['C1'], grades: {'C1': 95}));
+      final excellent = await processor.processStudent(
+        makeStudent(courses: ['C1'], grades: {'C1': 95}),
+      );
       expect(excellent['level'], 'відмінно');
       expect(excellent['passedCourses'], 1);
       expect(excellent['failedCourses'], 0);
 
       final risk = await processor.processStudent(
-          makeStudent(id: 'S2', courses: ['C1'], grades: {'C1': 40}));
+        makeStudent(id: 'S2', courses: ['C1'], grades: {'C1': 40}),
+      );
       expect(risk['level'], 'ризик відрахування');
       expect(risk['failedCourses'], 1);
 
@@ -227,27 +242,37 @@ S2,Іван,Мельник,2004-11-02,,C1:55
       expect(none['level'], 'немає оцінок');
     });
 
-    test('три способи обробки дають однаковий результат у тому ж порядку',
-        () async {
-      final students = List.generate(
-        7,
-        (i) => makeStudent(
-            id: 'S$i', courses: ['C1'], grades: {'C1': 50.0 + i * 8}),
-      );
-      final sequential = await processor.processSequential(students);
-      final batches = await processor.processInBatches(students, batchSize: 3);
-      final parallel = await processor.processParallel(students);
+    test(
+      'три способи обробки дають однаковий результат у тому ж порядку',
+      () async {
+        final students = List.generate(
+          7,
+          (i) => makeStudent(
+            id: 'S$i',
+            courses: ['C1'],
+            grades: {'C1': 50.0 + i * 8},
+          ),
+        );
+        final sequential = await processor.processSequential(students);
+        final batches = await processor.processInBatches(
+          students,
+          batchSize: 3,
+        );
+        final parallel = await processor.processParallel(students);
 
-      expect(batches, equals(sequential));
-      expect(parallel, equals(sequential));
-    });
+        expect(batches, equals(sequential));
+        expect(parallel, equals(sequential));
+      },
+    );
 
     test('readStudents читає JSON-файл', () async {
       final dir = Directory.systemTemp.createTempSync('dart_basics_test_');
       addTearDown(() => dir.deleteSync(recursive: true));
       final path = '${dir.path}/students.json';
 
-      final students = [makeStudent(courses: ['C1'], grades: {'C1': 88})];
+      final students = [
+        makeStudent(courses: ['C1'], grades: {'C1': 88}),
+      ];
       await File(path)
           .writeAsString(jsonEncode(students.map((s) => s.toJson()).toList()));
 
@@ -261,7 +286,7 @@ S2,Іван,Мельник,2004-11-02,,C1:55
       final path = '${dir.path}/nested/out.json';
 
       await processor.writeResults([
-        {'id': 'S1', 'level': 'добре'}
+        {'id': 'S1', 'level': 'добре'},
       ], path);
 
       final decoded = jsonDecode(await File(path).readAsString()) as List;
@@ -269,8 +294,10 @@ S2,Іван,Мельник,2004-11-02,,C1:55
     });
 
     test('readStudents для відсутнього файлу кидає FileSystemException', () {
-      expect(processor.readStudents('no/such/file.json'),
-          throwsA(isA<FileSystemException>()));
+      expect(
+        processor.readStudents('no/such/file.json'),
+        throwsA(isA<FileSystemException>()),
+      );
     });
   });
 }

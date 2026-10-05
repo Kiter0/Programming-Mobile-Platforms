@@ -110,7 +110,10 @@ void main() {
   group('Course', () {
     test('hasPrerequisites відрізняє курси з передумовами', () {
       expect(makeCourse('C1').hasPrerequisites(), isFalse);
-      expect(makeCourse('C2', prerequisites: ['C1']).hasPrerequisites(), isTrue);
+      expect(
+        makeCourse('C2', prerequisites: ['C1']).hasPrerequisites(),
+        isTrue,
+      );
     });
 
     test('canStudentEnroll: курс без передумов доступний', () {
@@ -137,8 +140,10 @@ void main() {
 
     test('toString показує передумови або "немає"', () {
       expect(makeCourse('C1').toString(), contains('передумови: немає'));
-      expect(makeCourse('C2', prerequisites: ['C1']).toString(),
-          contains('передумови: C1'));
+      expect(
+        makeCourse('C2', prerequisites: ['C1']).toString(),
+        contains('передумови: C1'),
+      );
     });
   });
 
@@ -157,11 +162,14 @@ void main() {
       expect(professor.teaches('C1'), isFalse);
     });
 
-    test('список Person поводиться по-різному залежно від справжнього типу', () {
-      final List<Person> people = [makeStudent(), makeProfessor()];
-      expect(people.map((p) => p.role), ['Student', 'Professor']);
-      expect(people.every((p) => p.fullName.isNotEmpty), isTrue);
-    });
+    test(
+      'список Person поводиться по-різному залежно від справжнього типу',
+      () {
+        final List<Person> people = [makeStudent(), makeProfessor()];
+        expect(people.map((p) => p.role), ['Student', 'Professor']);
+        expect(people.every((p) => p.fullName.isNotEmpty), isTrue);
+      },
+    );
 
     test('Professor.toString містить імʼя та кафедру', () {
       final text = makeProfessor().toString();
@@ -185,8 +193,10 @@ void main() {
     });
 
     test('addStudent відхиляє дублікат id', () {
-      expect(() => university.addStudent(makeStudent(id: 'S1')),
-          throwsArgumentError);
+      expect(
+        () => university.addStudent(makeStudent(id: 'S1')),
+        throwsArgumentError,
+      );
     });
 
     test('findStudentById знаходить студента або повертає null', () {
@@ -194,17 +204,22 @@ void main() {
       expect(university.findStudentById('S404'), isNull);
     });
 
-    test('removeStudent видаляє студента, а для невідомого id кидає помилку', () {
-      university.removeStudent('S1');
-      expect(university.findStudentById('S1'), isNull);
-      expect(() => university.removeStudent('S1'), throwsArgumentError);
-    });
+    test(
+      'removeStudent видаляє студента, а для невідомого id кидає помилку',
+      () {
+        university.removeStudent('S1');
+        expect(university.findStudentById('S1'), isNull);
+        expect(() => university.removeStudent('S1'), throwsArgumentError);
+      },
+    );
 
     test('addProfessor додає викладача та відхиляє дублікат id', () {
       university.addProfessor(makeProfessor());
       expect(university.professors.length, 1);
-      expect(() => university.addProfessor(makeProfessor()),
-          throwsArgumentError);
+      expect(
+        () => university.addProfessor(makeProfessor()),
+        throwsArgumentError,
+      );
     });
 
     test('addCourse відхиляє дублікат id', () {
@@ -232,10 +247,19 @@ void main() {
       expect(university.getStudentsByCourse('C2').map((s) => s.id), ['S1']);
     });
 
-    test('enrollStudent кидає ArgumentError для невідомого студента чи курсу', () {
-      expect(() => university.enrollStudent('S404', 'C1'), throwsArgumentError);
-      expect(() => university.enrollStudent('S1', 'C404'), throwsArgumentError);
-    });
+    test(
+      'enrollStudent кидає ArgumentError для невідомого студента чи курсу',
+      () {
+        expect(
+          () => university.enrollStudent('S404', 'C1'),
+          throwsArgumentError,
+        );
+        expect(
+          () => university.enrollStudent('S1', 'C404'),
+          throwsArgumentError,
+        );
+      },
+    );
 
     test('getStudentsByCourse повертає лише записаних', () {
       university.enrollStudent('S2', 'C1');
@@ -248,16 +272,23 @@ void main() {
       expect(available.map((c) => c.id), ['C1']);
     });
 
-    test('getAvailableCoursesForStudent кидає ArgumentError для невідомого id',
-        () {
-      expect(() => university.getAvailableCoursesForStudent('S404'),
-          throwsArgumentError);
-    });
+    test(
+      'getAvailableCoursesForStudent кидає ArgumentError для невідомого id',
+      () {
+        expect(
+          () => university.getAvailableCoursesForStudent('S404'),
+          throwsArgumentError,
+        );
+      },
+    );
 
     test('allPeople обʼєднує студентів і викладачів', () {
       university.addProfessor(makeProfessor());
-      expect(university.allPeople.map((p) => p.role),
-          ['Student', 'Student', 'Professor']);
+      expect(university.allPeople.map((p) => p.role), [
+        'Student',
+        'Student',
+        'Professor',
+      ]);
     });
 
     test('generateStatistics рахує кількості, середній GPA і найкращого', () {

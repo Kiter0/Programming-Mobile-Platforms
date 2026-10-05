@@ -5,7 +5,7 @@ void main() {
   testFunctionalProgramming();
 }
 
-//  1. Звичайні функції 
+//  1. Звичайні функції
 
 int calculateSum(int a, int b) {
   return a + b;
@@ -25,7 +25,7 @@ double calculateAverage(List<double> numbers) {
 // Стрілкова функція: короткий запис, коли в тілі лише один вираз
 int square(int x) => x * x;
 
-//  2. Іменовані та необов'язкові параметри 
+//  2. Іменовані та необов'язкові параметри
 
 // {} означає іменовані параметри; middleName необов'язковий, uppercase має значення за замовчуванням
 String formatName(
@@ -69,7 +69,7 @@ int Function(int) makeMultiplier(int factor) {
   return (int x) => x * factor;
 }
 
-// 4. Рекурсивні функції 
+// 4. Рекурсивні функції
 
 int fibonacci(int n) {
   if (n < 0) {
@@ -96,8 +96,10 @@ int factorial(int n) {
 void testBasicFunctions() {
   print('\n--- Звичайні функції ---');
   print('calculateSum(3, 4) = ${calculateSum(3, 4)}');
-  print('calculateAverage([4.0, 5.0, 9.0]) = '
-      '${calculateAverage([4.0, 5.0, 9.0])}');
+  print(
+    'calculateAverage([4.0, 5.0, 9.0]) = '
+    '${calculateAverage([4.0, 5.0, 9.0])}',
+  );
   print('calculateAverage([]) = ${calculateAverage([])}');
   print('square(5) = ${square(5)}');
   print('factorial(5) = ${factorial(5)}');
@@ -132,8 +134,10 @@ void testFunctionalProgramming() {
 
   // Ланцюжок викликів
   final words = ['dart', 'flutter', 'code', 'mobile', 'app'];
-  final result =
-      words.where((w) => w.length > 3).map((w) => w.toUpperCase()).toList();
+  final result = words
+      .where((w) => w.length > 3)
+      .map((w) => w.toUpperCase())
+      .toList();
   print('слова довші за 3 літери (великими): $result');
 
   // Замикання

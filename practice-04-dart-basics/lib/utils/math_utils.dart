@@ -49,7 +49,9 @@ class FibonacciCalculator {
       throw ArgumentError('n має бути не менше 0');
     }
     if (n > maxN) {
-      throw ArgumentError('n має бути не більше $maxN (інакше переповнення int)');
+      throw ArgumentError(
+        'n має бути не більше $maxN (інакше переповнення int)',
+      );
     }
   }
 }

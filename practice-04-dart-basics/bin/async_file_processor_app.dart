@@ -13,12 +13,16 @@ Future<void> main() async {
     // 1. Read
     final stopwatch = Stopwatch()..start();
     final students = await processor.readStudents(inputPath);
-    print('1. Прочитано ${students.length} студентів з $inputPath '
-        '(${stopwatch.elapsedMilliseconds} мс)');
+    print(
+      '1. Прочитано ${students.length} студентів з $inputPath '
+      '(${stopwatch.elapsedMilliseconds} мс)',
+    );
 
     // 2. Process: порівнюємо три способи
-    print('\n2. Обробка (затримка ${processor.processingDelay.inMilliseconds} мс '
-        'на студента):');
+    print(
+      '\n2. Обробка (затримка ${processor.processingDelay.inMilliseconds} мс '
+      'на студента):',
+    );
 
     stopwatch.reset();
     await processor.processSequential(students);
@@ -41,14 +45,19 @@ Future<void> main() async {
     // 3. Write
     stopwatch.reset();
     await processor.writeResults(results, outputPath);
-    print('\n3. Результати записано в $outputPath '
-        '(${stopwatch.elapsedMilliseconds} мс)');
+    print(
+      '\n3. Результати записано в $outputPath '
+      '(${stopwatch.elapsedMilliseconds} мс)',
+    );
 
     // Підсумок за категоріями
     final byLevel = <String, int>{};
     for (final row in results) {
-      byLevel.update(row['level'] as String, (count) => count + 1,
-          ifAbsent: () => 1);
+      byLevel.update(
+        row['level'] as String,
+        (count) => count + 1,
+        ifAbsent: () => 1,
+      );
     }
     print('\nПідсумок за категоріями:');
     byLevel.forEach((level, count) => print('  $level: $count'));

@@ -82,7 +82,9 @@ void demonstrateCollections() {
   print('List: $numbers, перший: ${numbers.first}, довжина: ${numbers.length}');
 
   Set<String> tags = {'dart', 'flutter'};
-  tags.add('dart'); // дублікат не додасться: Set зберігає лише унікальні значення
+  tags.add(
+    'dart',
+  ); // дублікат не додасться: Set зберігає лише унікальні значення
   tags.add('mobile');
   tags.add('mobile');
   print('Set: $tags, містить dart: ${tags.contains('dart')}');
