@@ -1,0 +1,175 @@
+[
+  {
+    "id": "S1",
+    "firstName": "Анна",
+    "lastName": "Коваль",
+    "birthDate": "2005-03-14T00:00:00.000",
+    "enrolledCourses": [
+      "C1",
+      "C2",
+      "C3"
+    ],
+    "grades": {
+      "C1": 90.0,
+      "C2": 95.0,
+      "C3": 75.0
+    },
+    "skills": [
+      "dart",
+      "git"
+    ]
+  },
+  {
+    "id": "S2",
+    "firstName": "Іван",
+    "lastName": "Мельник",
+    "birthDate": "2004-11-02T00:00:00.000",
+    "enrolledCourses": [
+      "C1",
+      "C3"
+    ],
+    "grades": {
+      "C1": 55.0,
+      "C3": 70.0
+    },
+    "skills": [
+      "dart",
+      "sql"
+    ]
+  },
+  {
+    "id": "S3",
+    "firstName": "Олена",
+    "lastName": "Бондар",
+    "birthDate": "2005-07-25T00:00:00.000",
+    "enrolledCourses": [
+      "C1",
+      "C2"
+    ],
+    "grades": {
+      "C1": 82.0,
+      "C2": 78.0
+    },
+    "skills": [
+      "flutter"
+    ]
+  },
+  {
+    "id": "S4",
+    "firstName": "Максим",
+    "lastName": "Лисенко",
+    "birthDate": "2003-01-09T00:00:00.000",
+    "enrolledCourses": [
+      "C3"
+    ],
+    "grades": {
+      "C3": 68.0
+    },
+    "skills": []
+  },
+  {
+    "id": "S5",
+    "firstName": "Дарина",
+    "lastName": "Савчук",
+    "birthDate": "2005-03-30T00:00:00.000",
+    "enrolledCourses": [
+      "C1",
+      "C2",
+      "C4"
+    ],
+    "grades": {
+      "C1": 97.0,
+      "C2": 99.0,
+      "C4": 92.0
+    },
+    "skills": [
+      "dart",
+      "flutter",
+      "git"
+    ]
+  },
+  {
+    "id": "S6",
+    "firstName": "Тарас",
+    "lastName": "Гриценко",
+    "birthDate": "2004-06-18T00:00:00.000",
+    "enrolledCourses": [
+      "C1",
+      "C3"
+    ],
+    "grades": {
+      "C1": 61.0,
+      "C3": 88.0
+    },
+    "skills": [
+      "sql"
+    ]
+  },
+  {
+    "id": "S7",
+    "firstName": "Софія",
+    "lastName": "Ткачук",
+    "birthDate": "2003-12-05T00:00:00.000",
+    "enrolledCourses": [
+      "C1",
+      "C3"
+    ],
+    "grades": {
+      "C1": 73.0,
+      "C3": 49.0
+    },
+    "skills": [
+      "git"
+    ]
+  },
+  {
+    "id": "S8",
+    "firstName": "Богдан",
+    "lastName": "Кравець",
+    "birthDate": "2005-09-11T00:00:00.000",
+    "enrolledCourses": [
+      "C1"
+    ],
+    "grades": {
+      "C1": 48.0
+    },
+    "skills": [
+      "dart"
+    ]
+  },
+  {
+    "id": "S9",
+    "firstName": "Юлія",
+    "lastName": "Шевчук",
+    "birthDate": "2004-02-27T00:00:00.000",
+    "enrolledCourses": [
+      "C1",
+      "C2",
+      "C3"
+    ],
+    "grades": {
+      "C1": 85.0,
+      "C2": 67.0,
+      "C3": 91.0
+    },
+    "skills": [
+      "flutter",
+      "sql"
+    ]
+  },
+  {
+    "id": "S10",
+    "firstName": "Назар",
+    "lastName": "Попович",
+    "birthDate": "2003-08-15T00:00:00.000",
+    "enrolledCourses": [
+      "C1",
+      "C3"
+    ],
+    "grades": {
+      "C1": 70.0,
+      "C3": 58.0
+    },
+    "skills": []
+  }
+]
