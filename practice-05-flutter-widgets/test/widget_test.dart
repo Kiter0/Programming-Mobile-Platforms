@@ -20,6 +20,12 @@ void main() {
       ),
     );
 
-    expect(find.text('Products'), findsOneWidget);
+    await tester.pump();
+
+    expect(find.text('Flutter Widgets'), findsOneWidget);
+    expect(find.text('Практична робота №5'), findsOneWidget);
+    expect(find.text('Custom Widgets'), findsOneWidget);
+    expect(find.text('Button Components'), findsOneWidget);
+    expect(find.text('Stateful Widget'), findsOneWidget);
   });
 }

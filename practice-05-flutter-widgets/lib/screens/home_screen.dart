@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
+import '../utils/app_state.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/profile_widget.dart';
 import '../widgets/animated_counter.dart';
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+  final AppState appState;
+
+  const HomeScreen({
+    super.key,
+    required this.appState,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,10 +23,26 @@ class HomeScreen extends StatelessWidget {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter Widgets'),
-        centerTitle: true,
+  appBar: AppBar(
+    title: const Text('Flutter Widgets'),
+    centerTitle: true,
+    actions: [
+      IconButton(
+        tooltip: 'Товари',
+        icon: const Icon(Icons.shopping_bag),
+        onPressed: () {
+          Navigator.pushNamed(context, '/products');
+        },
       ),
+      IconButton(
+        tooltip: 'Профіль',
+        icon: const Icon(Icons.person),
+        onPressed: () {
+          Navigator.pushNamed(context, '/profile');
+        },
+      ),
+    ],
+  ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(

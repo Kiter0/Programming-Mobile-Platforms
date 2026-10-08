@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../models/user.dart';
 
 class ProfileWidget extends StatelessWidget {
@@ -34,10 +35,7 @@ class ProfileWidget extends StatelessWidget {
   Widget _buildCompactProfile(ThemeData theme) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 28,
-          backgroundImage: NetworkImage(user.avatarUrl),
-        ),
+        _buildAvatar(radius: 28),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -67,10 +65,7 @@ class ProfileWidget extends StatelessWidget {
   Widget _buildExpandedProfile(ThemeData theme) {
     return Column(
       children: [
-        CircleAvatar(
-          radius: 55,
-          backgroundImage: NetworkImage(user.avatarUrl),
-        ),
+        _buildAvatar(radius: 55),
         const SizedBox(height: 16),
         Text(
           user.name,
@@ -93,6 +88,49 @@ class ProfileWidget extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  Widget _buildAvatar({
+    required double radius,
+  }) {
+    return CircleAvatar(
+      radius: radius,
+      backgroundColor: Colors.blue.shade100,
+      child: ClipOval(
+        child: Image.network(
+          user.avatarUrl,
+          width: radius * 2,
+          height: radius * 2,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Icon(
+              Icons.person,
+              size: radius,
+              color: Colors.blue.shade700,
+            );
+          },
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            }
+
+            return SizedBox(
+              width: radius * 2,
+              height: radius * 2,
+              child: Center(
+                child: SizedBox(
+                  width: radius * 0.6,
+                  height: radius * 0.6,
+                  child: const CircularProgressIndicator(
+                    strokeWidth: 2,
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }

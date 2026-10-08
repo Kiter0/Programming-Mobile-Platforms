@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import 'models/user.dart';
+import 'screens/home_screen.dart';
 import 'screens/products_screen.dart';
+import 'screens/profile_screen.dart';
 import 'utils/app_state.dart';
+import 'utils/themes.dart';
 
 void main() {
   final appState = AppState();
@@ -32,22 +35,20 @@ class MobileWidgetsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: appState,
-      builder: (context, child) {
-        return MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Mobile Widgets App',
-          theme: ThemeData(
-            colorScheme: ColorScheme.fromSeed(
-              seedColor: Colors.blue,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Mobile Widgets App',
+      theme: AppThemes.lightTheme,
+      home: HomeScreen(
+        appState: appState,
+      ),
+      routes: {
+        '/products': (context) => ProductsScreen(
+              appState: appState,
             ),
-            useMaterial3: true,
-          ),
-          home: ProductsScreen(
-            appState: appState,
-          ),
-        );
+        '/profile': (context) => ProfileScreen(
+              appState: appState,
+            ),
       },
     );
   }
