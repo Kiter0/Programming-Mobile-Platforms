@@ -119,6 +119,8 @@ class _ProductCardState extends State<ProductCard>
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           IconButton(
@@ -141,24 +143,27 @@ class _ProductCardState extends State<ProductCard>
                       const SizedBox(height: 8),
                       Text(
                         widget.product.description,
+                        maxLines: 3,
+                        overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           color: Colors.grey.shade600,
                         ),
                       ),
                       const SizedBox(height: 12),
-                      Row(
-                        mainAxisAlignment:
-                            MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isCompact = constraints.maxWidth < 380;
+
+                          final price = Text(
                             '\$${widget.product.price.toStringAsFixed(2)}',
                             style: const TextStyle(
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                               color: Colors.blue,
                             ),
-                          ),
-                          ElevatedButton.icon(
+                          );
+
+                          final cartButton = ElevatedButton.icon(
                             onPressed: () {
                               widget.appState.addToCart(
                                 widget.product,
@@ -177,8 +182,32 @@ class _ProductCardState extends State<ProductCard>
                             },
                             icon: const Icon(Icons.shopping_cart),
                             label: const Text('До кошика'),
-                          ),
-                        ],
+                          );
+
+                          if (isCompact) {
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                price,
+                                const SizedBox(height: 10),
+                                cartButton,
+                              ],
+                            );
+                          }
+
+                          return Row(
+                            children: [
+                              price,
+                              const SizedBox(width: 8),
+                              Flexible(
+                                child: Align(
+                                  alignment: Alignment.centerRight,
+                                  child: cartButton,
+                                ),
+                              ),
+                            ],
+                          );
+                        },
                       ),
                     ],
                   ),

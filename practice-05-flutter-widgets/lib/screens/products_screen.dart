@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../models/product.dart';
@@ -71,11 +70,17 @@ class ProductsScreen extends StatelessWidget {
               Expanded(
                 child: wide
                     ? GridView.builder(
-                        padding: const EdgeInsets.all(AppConstants.screenPadding),
+                        padding: const EdgeInsets.all(
+                          AppConstants.screenPadding,
+                        ),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          childAspectRatio: 0.85,
+
+                          // Трохи збільшуємо висоту картки,
+                          // щоб увесь її вміст поміщався.
+                          childAspectRatio: 0.78,
+
                           crossAxisSpacing: 16,
                           mainAxisSpacing: 16,
                         ),
@@ -88,7 +93,9 @@ class ProductsScreen extends StatelessWidget {
                         },
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.all(AppConstants.screenPadding),
+                        padding: const EdgeInsets.all(
+                          AppConstants.screenPadding,
+                        ),
                         itemCount: products.length,
                         itemBuilder: (context, index) {
                           return Padding(
@@ -119,14 +126,30 @@ class ProductsScreen extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(AppConstants.cardRadius),
+        borderRadius: BorderRadius.circular(
+          AppConstants.cardRadius,
+        ),
         color: Colors.grey.shade100,
       ),
       child: Row(
         children: [
           CircleAvatar(
             radius: 24,
-            backgroundImage: NetworkImage(user.avatarUrl),
+            backgroundColor: Colors.blue.shade100,
+            child: ClipOval(
+              child: Image.network(
+                user.avatarUrl,
+                width: 48,
+                height: 48,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Icon(
+                    Icons.person,
+                    color: Colors.blue.shade700,
+                  );
+                },
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
