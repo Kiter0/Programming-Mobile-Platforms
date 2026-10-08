@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../models/user.dart';
 import '../utils/app_state.dart';
+import '../utils/constants.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/profile_widget.dart';
 
@@ -37,7 +38,7 @@ class ProfileScreen extends StatelessWidget {
                 maxWidth: 600,
               ),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AppConstants.screenPadding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -200,7 +201,7 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppConstants.cardRadius),
         border: Border.all(
           color: Colors.blue.shade100,
         ),

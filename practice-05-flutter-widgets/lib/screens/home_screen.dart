@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 
 import '../utils/app_state.dart';
+import '../utils/constants.dart';
 import '../widgets/animated_counter.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/profile_widget.dart';
@@ -18,7 +19,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Flutter Widgets'),
+        title: const Text(AppConstants.homeTitle),
         centerTitle: true,
         actions: [
           IconButton(
@@ -54,7 +55,7 @@ class HomeScreen extends StatelessWidget {
                 maxWidth: 600,
               ),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(20),
+                padding: const EdgeInsets.all(AppConstants.screenPadding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [

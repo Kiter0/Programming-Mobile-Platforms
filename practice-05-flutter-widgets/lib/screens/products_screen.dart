@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../models/product.dart';
 import '../utils/app_state.dart';
+import '../utils/constants.dart';
 import '../widgets/product_card.dart';
 
 class ProductsScreen extends StatelessWidget {
@@ -70,7 +71,7 @@ class ProductsScreen extends StatelessWidget {
               Expanded(
                 child: wide
                     ? GridView.builder(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(AppConstants.screenPadding),
                         gridDelegate:
                             const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
@@ -87,7 +88,7 @@ class ProductsScreen extends StatelessWidget {
                         },
                       )
                     : ListView.builder(
-                        padding: const EdgeInsets.all(16),
+                        padding: const EdgeInsets.all(AppConstants.screenPadding),
                         itemCount: products.length,
                         itemBuilder: (context, index) {
                           return Padding(
@@ -118,7 +119,7 @@ class ProductsScreen extends StatelessWidget {
       margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(AppConstants.cardRadius),
         color: Colors.grey.shade100,
       ),
       child: Row(
