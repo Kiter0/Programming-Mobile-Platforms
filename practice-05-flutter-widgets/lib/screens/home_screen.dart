@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../utils/app_state.dart';
@@ -47,163 +48,170 @@ class HomeScreen extends StatelessWidget {
             );
           }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(
-                  'Custom Widgets',
-                  style: Theme.of(context)
-                      .textTheme
-                      .headlineMedium
-                      ?.copyWith(
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 600,
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Text(
+                      'Custom Widgets',
+                      style: Theme.of(context)
+                          .textTheme
+                          .headlineMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    Text(
+                      'Практична робота №5',
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    const Text(
+                      'Expanded Profile',
+                      style: TextStyle(
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                       ),
-                ),
+                    ),
 
-                const SizedBox(height: 8),
+                    const SizedBox(height: 12),
 
-                Text(
-                  'Практична робота №5',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
+                    ProfileWidget(
+                      user: user,
+                      onEditPressed: () {
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                    ),
 
-                const SizedBox(height: 24),
+                    const SizedBox(height: 24),
 
-                const Text(
-                  'Expanded Profile',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                ProfileWidget(
-                  user: user,
-                  onEditPressed: () {
-                    Navigator.pushNamed(context, '/profile');
-                  },
-                ),
-
-                const SizedBox(height: 24),
-
-                const Text(
-                  'Compact Profile',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                ProfileWidget(
-                  user: user,
-                  isCompact: true,
-                  onEditPressed: () {
-                    Navigator.pushNamed(context, '/profile');
-                  },
-                ),
-
-                const SizedBox(height: 24),
-
-                const Text(
-                  'Button Components',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                CustomButton(
-                  text: 'Primary Button',
-                  style: CustomButtonStyle.primary,
-                  icon: const Icon(Icons.check),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Primary Button натиснуто'),
+                    const Text(
+                      'Compact Profile',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                ),
+                    ),
 
-                const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                CustomButton(
-                  text: 'Secondary Button',
-                  style: CustomButtonStyle.secondary,
-                  icon: const Icon(Icons.star),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Secondary Button натиснуто'),
+                    ProfileWidget(
+                      user: user,
+                      isCompact: true,
+                      onEditPressed: () {
+                        Navigator.pushNamed(context, '/profile');
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    const Text(
+                      'Button Components',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
-                ),
+                    ),
 
-                const SizedBox(height: 12),
+                    const SizedBox(height: 12),
 
-                CustomButton(
-                  text: 'Danger Button',
-                  style: CustomButtonStyle.danger,
-                  icon: const Icon(Icons.delete),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Danger Button натиснуто'),
+                    CustomButton(
+                      text: 'Primary Button',
+                      style: CustomButtonStyle.primary,
+                      icon: const Icon(Icons.check),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Primary Button натиснуто'),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    CustomButton(
+                      text: 'Secondary Button',
+                      style: CustomButtonStyle.secondary,
+                      icon: const Icon(Icons.star),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Secondary Button натиснуто'),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    CustomButton(
+                      text: 'Danger Button',
+                      style: CustomButtonStyle.danger,
+                      icon: const Icon(Icons.delete),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Danger Button натиснуто'),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    CustomButton(
+                      text: 'Outline Button',
+                      style: CustomButtonStyle.outline,
+                      icon: const Icon(Icons.info),
+                      onPressed: () {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Outline Button натиснуто'),
+                          ),
+                        );
+                      },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    const CustomButton(
+                      text: 'Loading...',
+                      isLoading: true,
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    const Text(
+                      'Stateful Widget',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
                       ),
-                    );
-                  },
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    const AnimatedCounter(
+                      initialValue: 0,
+                      maxValue: 10,
+                      animationDuration: Duration(milliseconds: 500),
+                      primaryColor: Colors.blue,
+                    ),
+                  ],
                 ),
-
-                const SizedBox(height: 12),
-
-                CustomButton(
-                  text: 'Outline Button',
-                  style: CustomButtonStyle.outline,
-                  icon: const Icon(Icons.info),
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Outline Button натиснуто'),
-                      ),
-                    );
-                  },
-                ),
-
-                const SizedBox(height: 12),
-
-                const CustomButton(
-                  text: 'Loading...',
-                  isLoading: true,
-                ),
-
-                const SizedBox(height: 24),
-
-                const Text(
-                  'Stateful Widget',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-
-                const SizedBox(height: 12),
-
-                const AnimatedCounter(
-                  initialValue: 0,
-                  maxValue: 10,
-                  animationDuration: Duration(milliseconds: 500),
-                  primaryColor: Colors.blue,
-                ),
-              ],
+              ),
             ),
           );
         },

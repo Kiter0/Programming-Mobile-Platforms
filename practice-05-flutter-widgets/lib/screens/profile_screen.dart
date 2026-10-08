@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../models/user.dart';
@@ -30,62 +31,69 @@ class ProfileScreen extends StatelessWidget {
             );
           }
 
-          return SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Text(
-                  'Мій профіль',
-                  style: TextStyle(
-                    fontSize: 28,
-                    fontWeight: FontWeight.bold,
-                  ),
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: 600,
+              ),
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const Text(
+                      'Мій профіль',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Інформація про користувача',
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    ProfileWidget(
+                      user: user,
+                      onEditPressed: () {
+                        _showEditProfileDialog(context, user);
+                      },
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    _buildInfoCard(
+                      icon: Icons.favorite,
+                      title: 'Обране',
+                      value: appState.favorites.length.toString(),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    _buildInfoCard(
+                      icon: Icons.shopping_cart,
+                      title: 'Товарів у кошику',
+                      value: appState.cartCount.toString(),
+                    ),
+
+                    const SizedBox(height: 24),
+
+                    CustomButton(
+                      text: 'До товарів',
+                      style: CustomButtonStyle.primary,
+                      icon: const Icon(Icons.shopping_bag),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/products');
+                      },
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Інформація про користувача',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                  ),
-                ),
-                const SizedBox(height: 24),
-
-                ProfileWidget(
-                  user: user,
-                  onEditPressed: () {
-                    _showEditProfileDialog(context, user);
-                  },
-                ),
-
-                const SizedBox(height: 24),
-
-                _buildInfoCard(
-                  icon: Icons.favorite,
-                  title: 'Обране',
-                  value: appState.favorites.length.toString(),
-                ),
-
-                const SizedBox(height: 12),
-
-                _buildInfoCard(
-                  icon: Icons.shopping_cart,
-                  title: 'Товарів у кошику',
-                  value: appState.cartCount.toString(),
-                ),
-
-                const SizedBox(height: 24),
-
-                CustomButton(
-                  text: 'До товарів',
-                  style: CustomButtonStyle.primary,
-                  icon: const Icon(Icons.shopping_bag),
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/products');
-                  },
-                ),
-              ],
+              ),
             ),
           );
         },

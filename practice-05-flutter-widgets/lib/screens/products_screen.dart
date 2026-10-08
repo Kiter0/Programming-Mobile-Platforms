@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 
 import '../models/product.dart';
@@ -41,6 +42,8 @@ class ProductsScreen extends StatelessWidget {
       ),
     ];
 
+    final wide = MediaQuery.of(context).size.width > 700;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Products'),
@@ -51,22 +54,51 @@ class ProductsScreen extends StatelessWidget {
         builder: (context, child) {
           return Column(
             children: [
-              _buildUserPanel(),
-              _buildStatePanel(),
-              Expanded(
-                child: ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16),
-                      child: ProductCard(
-                        product: products[index],
-                        appState: appState,
-                      ),
-                    );
-                  },
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(
+                    maxWidth: 1000,
+                  ),
+                  child: Column(
+                    children: [
+                      _buildUserPanel(),
+                      _buildStatePanel(),
+                    ],
+                  ),
                 ),
+              ),
+              Expanded(
+                child: wide
+                    ? GridView.builder(
+                        padding: const EdgeInsets.all(16),
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 2,
+                          childAspectRatio: 0.85,
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                        ),
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          return ProductCard(
+                            product: products[index],
+                            appState: appState,
+                          );
+                        },
+                      )
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: products.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.only(bottom: 16),
+                            child: ProductCard(
+                              product: products[index],
+                              appState: appState,
+                            ),
+                          );
+                        },
+                      ),
               ),
             ],
           );
@@ -96,23 +128,26 @@ class ProductsScreen extends StatelessWidget {
             backgroundImage: NetworkImage(user.avatarUrl),
           ),
           const SizedBox(width: 12),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                user.name,
-                style: const TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  user.name,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              Text(
-                user.email,
-                style: const TextStyle(
-                  fontSize: 13,
+                Text(
+                  user.email,
+                  style: const TextStyle(
+                    fontSize: 13,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ],
       ),
