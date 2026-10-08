@@ -38,7 +38,9 @@ class ProfileScreen extends StatelessWidget {
                 maxWidth: 600,
               ),
               child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppConstants.screenPadding),
+                padding: const EdgeInsets.all(
+                  AppConstants.screenPadding,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
@@ -58,32 +60,25 @@ class ProfileScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 24),
-
                     ProfileWidget(
                       user: user,
                       onEditPressed: () {
                         _showEditProfileDialog(context, user);
                       },
                     ),
-
                     const SizedBox(height: 24),
-
                     _buildInfoCard(
                       icon: Icons.favorite,
                       title: 'Обране',
                       value: appState.favorites.length.toString(),
                     ),
-
                     const SizedBox(height: 12),
-
                     _buildInfoCard(
                       icon: Icons.shopping_cart,
                       title: 'Товарів у кошику',
                       value: appState.cartCount.toString(),
                     ),
-
                     const SizedBox(height: 24),
-
                     CustomButton(
                       text: 'До товарів',
                       style: CustomButtonStyle.primary,
@@ -106,90 +101,15 @@ class ProfileScreen extends StatelessWidget {
     BuildContext context,
     User user,
   ) {
-    final nameController = TextEditingController(
-      text: user.name,
-    );
-
-    final emailController = TextEditingController(
-      text: user.email,
-    );
-
     showDialog(
       context: context,
       builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Редагування профілю'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Імʼя',
-                  prefixIcon: Icon(Icons.person),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  prefixIcon: Icon(Icons.email),
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(dialogContext);
-              },
-              child: const Text('Скасувати'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                final name = nameController.text.trim();
-                final email = emailController.text.trim();
-
-                if (name.isEmpty || email.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Імʼя та email не можуть бути порожніми',
-                      ),
-                    ),
-                  );
-                  return;
-                }
-
-                appState.setUser(
-                  User(
-                    name: name,
-                    email: email,
-                    avatarUrl: user.avatarUrl,
-                  ),
-                );
-
-                Navigator.pop(dialogContext);
-
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                      'Профіль успішно оновлено',
-                    ),
-                  ),
-                );
-              },
-              child: const Text('Зберегти'),
-            ),
-          ],
+        return _EditProfileDialog(
+          user: user,
+          appState: appState,
         );
       },
-    ).then((_) {
-      nameController.dispose();
-      emailController.dispose();
-    });
+    );
   }
 
   Widget _buildInfoCard({
@@ -201,7 +121,9 @@ class ProfileScreen extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: Colors.blue.shade50,
-        borderRadius: BorderRadius.circular(AppConstants.cardRadius),
+        borderRadius: BorderRadius.circular(
+          AppConstants.cardRadius,
+        ),
         border: Border.all(
           color: Colors.blue.shade100,
         ),
@@ -230,6 +152,118 @@ class ProfileScreen extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _EditProfileDialog extends StatefulWidget {
+  final User user;
+  final AppState appState;
+
+  const _EditProfileDialog({
+    required this.user,
+    required this.appState,
+  });
+
+  @override
+  State<_EditProfileDialog> createState() => _EditProfileDialogState();
+}
+
+class _EditProfileDialogState extends State<_EditProfileDialog> {
+  late final TextEditingController _nameController;
+  late final TextEditingController _emailController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _nameController = TextEditingController(
+      text: widget.user.name,
+    );
+
+    _emailController = TextEditingController(
+      text: widget.user.email,
+    );
+  }
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _emailController.dispose();
+
+    super.dispose();
+  }
+
+  void _saveProfile() {
+    final name = _nameController.text.trim();
+    final email = _emailController.text.trim();
+
+    final emailOk =
+        RegExp(r'^[^@\s]+@[^@\s]+\.[^@\s]+$').hasMatch(email);
+
+    if (name.isEmpty || !emailOk) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Введіть коректне ім’я та email'),
+        ),
+      );
+      return;
+    }
+
+    widget.appState.setUser(
+      User(
+        name: name,
+        email: email,
+        avatarUrl: widget.user.avatarUrl,
+      ),
+    );
+
+    Navigator.pop(context);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Профіль успішно оновлено'),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('Редагування профілю'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: _nameController,
+            decoration: const InputDecoration(
+              labelText: 'Імʼя',
+              prefixIcon: Icon(Icons.person),
+            ),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _emailController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              prefixIcon: Icon(Icons.email),
+            ),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: const Text('Скасувати'),
+        ),
+        ElevatedButton(
+          onPressed: _saveProfile,
+          child: const Text('Зберегти'),
+        ),
+      ],
     );
   }
 }

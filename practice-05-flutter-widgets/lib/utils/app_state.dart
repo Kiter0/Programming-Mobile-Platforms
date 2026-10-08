@@ -40,9 +40,15 @@ class AppState extends ChangeNotifier {
   }
 
   void addToCart(Product product) {
-    _cartCount++;
-    notifyListeners();
+  if (product.price < 0) {
+    throw ArgumentError(
+      'Ціна товару не може бути від’ємною',
+    );
   }
+
+  _cartCount++;
+  notifyListeners();
+}
 
   void removeFromCart() {
     if (_cartCount > 0) {
