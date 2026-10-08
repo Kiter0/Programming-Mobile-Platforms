@@ -46,74 +46,78 @@ class ProductsScreen extends StatelessWidget {
         title: const Text('Products'),
         centerTitle: true,
       ),
-      body: Column(
+      body: AnimatedBuilder(
+        animation: appState,
+        builder: (context, child) {
+          return Column(
+            children: [
+              _buildUserPanel(),
+              _buildStatePanel(),
+              Expanded(
+                child: ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: products.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 16),
+                      child: ProductCard(
+                        product: products[index],
+                        appState: appState,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildUserPanel() {
+    final user = appState.currentUser;
+
+    if (user == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Colors.grey.shade100,
+      ),
+      child: Row(
         children: [
-          _buildUserPanel(),
-          _buildStatePanel(),
-          Expanded(
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                return Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: ProductCard(
-                    product: products[index],
-                    appState: appState,
-                  ),
-                );
-              },
-            ),
+          CircleAvatar(
+            radius: 24,
+            backgroundImage: NetworkImage(user.avatarUrl),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                user.name,
+                style: const TextStyle(
+                  fontSize: 17,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(
+                user.email,
+                style: const TextStyle(
+                  fontSize: 13,
+                ),
+              ),
+            ],
           ),
         ],
       ),
     );
   }
-
-
-  Widget _buildUserPanel() {
-  final user = appState.currentUser;
-
-  if (user == null) {
-    return const SizedBox.shrink();
-  }
-
-  return Container(
-    margin: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-    padding: const EdgeInsets.all(12),
-    decoration: BoxDecoration(
-      borderRadius: BorderRadius.circular(16),
-      color: Colors.grey.shade100,
-    ),
-    child: Row(
-      children: [
-        CircleAvatar(
-          radius: 24,
-          backgroundImage: NetworkImage(user.avatarUrl),
-        ),
-        const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              user.name,
-              style: const TextStyle(
-                fontSize: 17,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
-              user.email,
-              style: const TextStyle(
-                fontSize: 13,
-              ),
-            ),
-          ],
-        ),
-      ],
-    ),
-  );
-}
 
   Widget _buildStatePanel() {
     return Container(

@@ -133,13 +133,23 @@ class _AnimatedCounterState extends State<AnimatedCounter>
 
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
-              child: LinearProgressIndicator(
-                value: _progress,
-                minHeight: 12,
-                backgroundColor: Colors.grey.shade200,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  _currentColor,
+              child: TweenAnimationBuilder<double>(
+                tween: Tween<double>(
+                  begin: 0,
+                  end: _progress,
                 ),
+                duration: widget.animationDuration,
+                curve: Curves.easeInOut,
+                builder: (context, value, child) {
+                  return LinearProgressIndicator(
+                    value: value,
+                    minHeight: 12,
+                    backgroundColor: Colors.grey.shade200,
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      _currentColor,
+                    ),
+                  );
+                },
               ),
             ),
 

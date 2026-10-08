@@ -33,8 +33,14 @@ class _ProductCardState extends State<ProductCard>
       duration: const Duration(milliseconds: 200),
     );
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _scaleController, curve: Curves.easeInOut),
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(
+      CurvedAnimation(
+        parent: _scaleController,
+        curve: Curves.easeInOut,
+      ),
     );
   }
 
@@ -44,7 +50,7 @@ class _ProductCardState extends State<ProductCard>
     super.dispose();
   }
 
- void _toggleFavorite() {
+  void _toggleFavorite() {
     widget.appState.toggleFavorite(widget.product);
   }
 
@@ -63,7 +69,7 @@ class _ProductCardState extends State<ProductCard>
   @override
   Widget build(BuildContext context) {
     final isFavorite = widget.appState.isFavorite(widget.product);
-    
+
     return GestureDetector(
       onHorizontalDragEnd: (details) {
         if (details.primaryVelocity == null) {
@@ -99,7 +105,6 @@ class _ProductCardState extends State<ProductCard>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildImageSection(),
-
                 Padding(
                   padding: const EdgeInsets.all(16),
                   child: Column(
@@ -125,24 +130,25 @@ class _ProductCardState extends State<ProductCard>
                                     ? Icons.favorite
                                     : Icons.favorite_border,
                                 key: ValueKey(isFavorite),
-                                color: isFavorite ? Colors.red : Colors.grey,
+                                color: isFavorite
+                                    ? Colors.red
+                                    : Colors.grey,
                               ),
                             ),
                           ),
                         ],
                       ),
-
                       const SizedBox(height: 8),
-
                       Text(
                         widget.product.description,
-                        style: TextStyle(color: Colors.grey.shade600),
+                        style: TextStyle(
+                          color: Colors.grey.shade600,
+                        ),
                       ),
-
                       const SizedBox(height: 12),
-
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        mainAxisAlignment:
+                            MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
                             '\$${widget.product.price.toStringAsFixed(2)}',
@@ -154,20 +160,24 @@ class _ProductCardState extends State<ProductCard>
                           ),
                           ElevatedButton.icon(
                             onPressed: () {
-                             widget.appState.addToCart(widget.product);
+                              widget.appState.addToCart(
+                                widget.product,
+                              );
 
-                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                content: Text(
-                                  '${widget.product.name} додано до кошика',
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '${widget.product.name} додано до кошика',
+                                  ),
+                                  duration: const Duration(
+                                    milliseconds: 700,
+                                  ),
                                 ),
-                              duration: const Duration(milliseconds: 700),
-                            ),
-                          );
-                        },
-                        icon: const Icon(Icons.shopping_cart),
-                        label: const Text('До кошика'),
-                      ),
+                              );
+                            },
+                            icon: const Icon(Icons.shopping_cart),
+                            label: const Text('До кошика'),
+                          ),
                         ],
                       ),
                     ],
@@ -182,18 +192,34 @@ class _ProductCardState extends State<ProductCard>
   }
 
   Widget _buildImageSection() {
-  return SizedBox(
-    height: 220,
-    width: double.infinity,
-    child: Image.network(
-      widget.product.imageUrl,
-      fit: BoxFit.cover,
-      loadingBuilder: (
-        context,
-        child,
-        loadingProgress,
-      ) {
-        if (loadingProgress == null) {
+    return SizedBox(
+      height: 220,
+      width: double.infinity,
+      child: Image.network(
+        widget.product.imageUrl,
+        fit: BoxFit.cover,
+        loadingBuilder: (
+          context,
+          child,
+          loadingProgress,
+        ) {
+          if (loadingProgress == null) {
+            if (_isLoading) {
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  setState(() {
+                    _isLoading = false;
+                  });
+                }
+              });
+            }
+
+            return child;
+          }
+
+          return const _ShimmerPlaceholder();
+        },
+        errorBuilder: (context, error, stackTrace) {
           if (_isLoading) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) {
@@ -204,49 +230,28 @@ class _ProductCardState extends State<ProductCard>
             });
           }
 
-          return child;
-        }
-
-        return Container(
-          color: Colors.grey.shade300,
-          child: const Center(
-            child: CircularProgressIndicator(),
-          ),
-        );
-      },
-      errorBuilder: (context, error, stackTrace) {
-        if (_isLoading) {
-          WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted) {
-              setState(() {
-                _isLoading = false;
-              });
-            }
-          });
-        }
-
-        return Container(
-          color: Colors.grey.shade200,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(
-                Icons.image_not_supported,
-                size: 50,
-                color: Colors.grey,
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Не вдалося завантажити зображення',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      },
-    ),
-  );
-}
+          return Container(
+            color: Colors.grey.shade200,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.image_not_supported,
+                  size: 50,
+                  color: Colors.grey,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'Не вдалося завантажити зображення',
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+    );
+  }
 
   void _showImagePreview(BuildContext context) {
     if (_isLoading) {
@@ -268,6 +273,66 @@ class _ProductCardState extends State<ProductCard>
                 fit: BoxFit.contain,
               ),
             ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ShimmerPlaceholder extends StatefulWidget {
+  const _ShimmerPlaceholder();
+
+  @override
+  State<_ShimmerPlaceholder> createState() => _ShimmerPlaceholderState();
+}
+
+class _ShimmerPlaceholderState extends State<_ShimmerPlaceholder>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return ShaderMask(
+          shaderCallback: (bounds) {
+            final position = _controller.value * 2 - 1;
+
+            return LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Colors.grey.shade300,
+                Colors.grey.shade100,
+                Colors.grey.shade300,
+              ],
+              stops: [
+                position - 0.3,
+                position,
+                position + 0.3,
+              ],
+            ).createShader(bounds);
+          },
+          child: Container(
+            color: Colors.white,
           ),
         );
       },
