@@ -2,8 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'edit_profile_screen.dart';
 import '../models/auth_model.dart';
 import '../models/profile_model.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -71,12 +73,12 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text(
-                        'Редагування профілю додамо на наступному етапі',
+                  context.read<ProfileModel>().clearMessages();
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const EditProfileScreen(),
                       ),
-                    ),
                   );
                 },
                 icon: const Icon(Icons.edit),

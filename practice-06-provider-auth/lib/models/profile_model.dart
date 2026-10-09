@@ -21,10 +21,10 @@ class ProfileModel extends ChangeNotifier {
   String? get errorMessage => _errorMessage;
   String? get successMessage => _successMessage;
 
-  Future<void> loadProfile({
+  void loadProfile({
     required String name,
     required String email,
-  }) async {
+  }) {
     _name = name;
     _email = email;
     _errorMessage = null;
