@@ -11,12 +11,14 @@ GoRouter createRouter(AuthService auth) {
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/movies',
     refreshListenable: auth,
+
     redirect: (context, state) {
       final path = state.uri.path;
       final isLogin = path == '/login';
       final isAdmin = path == '/admin';
       final isTickets = path == '/tickets';
 
+      // Гість має увійти для перегляду квитків або адмінпанелі.
       if ((isTickets || isAdmin) && !auth.isLoggedIn) {
         return Uri(
           path: '/login',
@@ -24,10 +26,12 @@ GoRouter createRouter(AuthService auth) {
         ).toString();
       }
 
+      // Звичайний користувач не може відкрити адмінпанель.
       if (isAdmin && !auth.isAdmin) {
         return '/movies';
       }
 
+      // Після входу повертаємо користувача на початкову адресу.
       if (isLogin && auth.isLoggedIn) {
         final from = state.uri.queryParameters['from'];
         final destination = Uri.tryParse(from ?? '');
@@ -48,19 +52,25 @@ GoRouter createRouter(AuthService auth) {
 
       return null;
     },
+
     errorBuilder: (context, state) => const NotFoundScreen(),
+
     routes: [
       GoRoute(path: '/', redirect: (context, state) => '/movies'),
+
       GoRoute(
         path: '/login',
         builder: (context, state) => LoginScreen(auth: auth),
       ),
+
       GoRoute(path: '/admin', builder: (context, state) => const AdminScreen()),
+
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
           return CinemaScaffold(navigationShell: navigationShell);
         },
         branches: [
+          // Вкладка «Афіша».
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -71,6 +81,7 @@ GoRouter createRouter(AuthService auth) {
                     path: ':movieId',
                     builder: (context, state) => MovieDetailScreen(
                       movieId: state.pathParameters['movieId']!,
+                      auth: auth,
                     ),
                     routes: [
                       GoRoute(
@@ -79,6 +90,7 @@ GoRouter createRouter(AuthService auth) {
                         builder: (context, state) => SeatsScreen(
                           movieId: state.pathParameters['movieId']!,
                           sessionId: state.pathParameters['sessionId']!,
+                          auth: auth,
                         ),
                       ),
                     ],
@@ -87,6 +99,8 @@ GoRouter createRouter(AuthService auth) {
               ),
             ],
           ),
+
+          // Вкладка «Мої квитки».
           StatefulShellBranch(
             routes: [
               GoRoute(
@@ -95,6 +109,8 @@ GoRouter createRouter(AuthService auth) {
               ),
             ],
           ),
+
+          // Вкладка «Профіль».
           StatefulShellBranch(
             routes: [
               GoRoute(

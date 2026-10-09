@@ -6,6 +6,7 @@ class CinemaData {
   static void addTicket(CinemaTicket ticket) {
     purchasedTickets.add(ticket);
   }
+
   static const movies = <Movie>[
     Movie(
       id: '1',

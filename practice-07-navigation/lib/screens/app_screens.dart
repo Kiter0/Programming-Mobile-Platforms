@@ -165,8 +165,13 @@ class _MoviesScreenState extends State<MoviesScreen> {
 
 class MovieDetailScreen extends StatelessWidget {
   final String movieId;
+  final AuthService auth;
 
-  const MovieDetailScreen({super.key, required this.movieId});
+  const MovieDetailScreen({
+    super.key,
+    required this.movieId,
+    required this.auth,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -428,11 +433,13 @@ class AdminScreen extends StatelessWidget {
 class SeatsScreen extends StatefulWidget {
   final String movieId;
   final String sessionId;
+  final AuthService auth;
 
   const SeatsScreen({
     super.key,
     required this.movieId,
     required this.sessionId,
+    required this.auth,
   });
 
   @override
