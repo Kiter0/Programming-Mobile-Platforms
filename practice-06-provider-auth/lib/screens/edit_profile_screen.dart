@@ -12,7 +12,8 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  int _consumerBuildCount = 0;
+  int _selectorBuildCount = 0;
+
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -115,60 +116,83 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     },
                   ),
                   const SizedBox(height: 20),
-                  Consumer<ProfileModel>(
-                    builder: (context, profile, child) {
+
+                  // Повідомлення про помилку
+                  Selector<ProfileModel, String?>(
+                    selector: (_, profile) => profile.errorMessage,
+                    builder: (context, error, child) {
                       debugPrint(
-                        'EditProfile Consumer build #${++_consumerBuildCount}',
+                        'Error Selector rebuilt #${++_selectorBuildCount}',
                       );
+
+                      if (error == null) {
+                        return const SizedBox.shrink();
+                      }
+
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          if (profile.errorMessage != null) ...[
-                            Text(
-                              profile.errorMessage!,
-                              textAlign: TextAlign.center,
-                              style: TextStyle(
-                                color: Theme.of(context).colorScheme.error,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                            OutlinedButton(
-                              onPressed: profile.isLoading
-                                  ? null
-                                  : _saveProfile,
-                              child: const Text('Повторити'),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
-                          if (profile.successMessage != null) ...[
-                            Text(
-                              profile.successMessage!,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.green,
-                              ),
-                            ),
-                            const SizedBox(height: 8),
-                          ],
-                          FilledButton.icon(
-                            onPressed:
-                                profile.isLoading ? null : _saveProfile,
-                            icon: profile.isLoading
-                                ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : const Icon(Icons.save),
-                            label: Text(
-                              profile.isLoading
-                                  ? 'Збереження...'
-                                  : 'Зберегти зміни',
+                          Text(
+                            error,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.error,
                             ),
                           ),
+                          const SizedBox(height: 8),
+                          OutlinedButton(
+                            onPressed: context
+                                    .read<ProfileModel>()
+                                    .isLoading
+                                ? null
+                                : _saveProfile,
+                            child: const Text('Повторити'),
+                          ),
+                          const SizedBox(height: 8),
                         ],
+                      );
+                    },
+                  ),
+
+                  // Повідомлення про успішне збереження
+                  Selector<ProfileModel, String?>(
+                    selector: (_, profile) => profile.successMessage,
+                    builder: (context, message, child) {
+                      if (message == null) {
+                        return const SizedBox.shrink();
+                      }
+
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: Text(
+                          message,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.green),
+                        ),
+                      );
+                    },
+                  ),
+
+                  // Кнопка реагує тільки на стан завантаження
+                  Selector<ProfileModel, bool>(
+                    selector: (_, profile) => profile.isLoading,
+                    builder: (context, isLoading, child) {
+                      return FilledButton.icon(
+                        onPressed: isLoading ? null : _saveProfile,
+                        icon: isLoading
+                            ? const SizedBox(
+                                width: 18,
+                                height: 18,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : const Icon(Icons.save),
+                        label: Text(
+                          isLoading
+                              ? 'Збереження...'
+                              : 'Зберегти зміни',
+                        ),
                       );
                     },
                   ),

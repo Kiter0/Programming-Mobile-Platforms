@@ -2,10 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'edit_profile_screen.dart';
 import '../models/auth_model.dart';
 import '../models/profile_model.dart';
-
+import 'edit_profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _buildCount = 0;
+
   @override
   void initState() {
     super.initState();
@@ -35,7 +35,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     debugPrint('HomeScreen build #${++_buildCount}');
-    final profile = context.watch<ProfileModel>();
 
     return Scaffold(
       appBar: AppBar(
@@ -43,9 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             tooltip: 'Вийти',
-            onPressed: () {
-              context.read<AuthModel>().logout();
-            },
+            onPressed: () => context.read<AuthModel>().logout(),
             icon: const Icon(Icons.logout),
           ),
         ],
@@ -66,21 +63,35 @@ class _HomeScreenState extends State<HomeScreen> {
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(height: 12),
-              Text(
-                profile.name,
-                style: Theme.of(context).textTheme.titleLarge,
+              Selector<ProfileModel, String>(
+                selector: (_, profile) => profile.name,
+                builder: (context, name, child) {
+                  debugPrint('Profile name Selector rebuilt');
+
+                  return Text(
+                    name,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  );
+                },
               ),
               const SizedBox(height: 8),
-              Text(profile.email),
+              Selector<ProfileModel, String>(
+                selector: (_, profile) => profile.email,
+                builder: (context, email, child) {
+                  debugPrint('Profile email Selector rebuilt');
+
+                  return Text(email);
+                },
+              ),
               const SizedBox(height: 24),
               FilledButton.icon(
                 onPressed: () {
                   context.read<ProfileModel>().clearMessages();
 
-                    Navigator.of(context).push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const EditProfileScreen(),
-                      ),
+                  Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => const EditProfileScreen(),
+                    ),
                   );
                 },
                 icon: const Icon(Icons.edit),
@@ -88,9 +99,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 12),
               OutlinedButton.icon(
-                onPressed: () {
-                  context.read<AuthModel>().logout();
-                },
+                onPressed: () => context.read<AuthModel>().logout(),
                 icon: const Icon(Icons.logout),
                 label: const Text('Вийти'),
               ),
