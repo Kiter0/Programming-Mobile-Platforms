@@ -5,26 +5,36 @@
 // gestures. You can also use WidgetTester to find child widgets in the widget
 // tree, read text, and verify that the values of widget properties are correct.
 
-import 'package:flutter/material.dart';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
 
 import 'package:practice_06_provider_auth/main.dart';
+import 'package:practice_06_provider_auth/models/auth_model.dart';
+import 'package:practice_06_provider_auth/models/profile_model.dart';
+import 'package:practice_06_provider_auth/services/fake_auth_api.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('Login screen is displayed initially', (tester) async {
+    final api = FakeAuthApi();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<AuthModel>(
+            create: (_) => AuthModel(api),
+          ),
+          ChangeNotifierProvider<ProfileModel>(
+            create: (_) => ProfileModel(api),
+          ),
+        ],
+        child: const AuthApp(),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Вхід у застосунок'), findsOneWidget);
+    expect(find.text('Email'), findsOneWidget);
+    expect(find.text('Пароль'), findsOneWidget);
+    expect(find.text('Увійти'), findsOneWidget);
   });
 }
