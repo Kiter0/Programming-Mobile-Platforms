@@ -1,7 +1,11 @@
-
 import '../models/movie.dart';
 
 class CinemaData {
+  static final List<CinemaTicket> purchasedTickets = [];
+
+  static void addTicket(CinemaTicket ticket) {
+    purchasedTickets.add(ticket);
+  }
   static const movies = <Movie>[
     Movie(
       id: '1',
@@ -51,8 +55,7 @@ class CinemaData {
       id: '5',
       title: 'Матриця',
       genre: 'Фантастика',
-      description:
-          'Програміст відкриває правду про світ, у якому живе.',
+      description: 'Програміст відкриває правду про світ, у якому живе.',
       durationMinutes: 136,
       rating: 8.7,
       posterEmoji: '🟢',
@@ -126,8 +129,6 @@ class CinemaData {
   }
 
   static List<MovieSession> sessionsForMovie(String movieId) {
-    return sessions
-        .where((session) => session.movieId == movieId)
-        .toList();
+    return sessions.where((session) => session.movieId == movieId).toList();
   }
 }
