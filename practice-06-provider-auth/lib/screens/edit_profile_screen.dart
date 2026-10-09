@@ -12,6 +12,7 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
+  int _consumerBuildCount = 0;
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -116,6 +117,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   const SizedBox(height: 20),
                   Consumer<ProfileModel>(
                     builder: (context, profile, child) {
+                      debugPrint(
+                        'EditProfile Consumer build #${++_consumerBuildCount}',
+                      );
                       return Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [

@@ -15,6 +15,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _buildCount = 0;
   @override
   void initState() {
     super.initState();
@@ -33,6 +34,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('HomeScreen build #${++_buildCount}');
     final profile = context.watch<ProfileModel>();
 
     return Scaffold(
