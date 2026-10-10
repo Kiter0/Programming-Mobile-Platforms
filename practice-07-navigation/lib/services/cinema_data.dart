@@ -1,12 +1,15 @@
 import '../models/movie.dart';
 
 class CinemaData {
+  // Квитки, придбані під час роботи застосунку.
   static final List<CinemaTicket> purchasedTickets = [];
 
+  // Додавання придбаного квитка.
   static void addTicket(CinemaTicket ticket) {
     purchasedTickets.add(ticket);
   }
 
+  // Список фільмів.
   static const movies = <Movie>[
     Movie(
       id: '1',
@@ -63,6 +66,7 @@ class CinemaData {
     ),
   ];
 
+  // Розклад сеансів.
   static const sessions = <MovieSession>[
     MovieSession(
       id: 's1',
@@ -115,6 +119,7 @@ class CinemaData {
     ),
   ];
 
+  // Пошук фільму за ідентифікатором.
   static Movie? findMovie(String id) {
     for (final movie in movies) {
       if (movie.id == id) return movie;
@@ -122,6 +127,7 @@ class CinemaData {
     return null;
   }
 
+  // Пошук сеансу за ідентифікатором.
   static MovieSession? findSession(String id) {
     for (final session in sessions) {
       if (session.id == id) return session;
@@ -129,6 +135,7 @@ class CinemaData {
     return null;
   }
 
+  // Отримання сеансів конкретного фільму.
   static List<MovieSession> sessionsForMovie(String movieId) {
     return sessions.where((session) => session.movieId == movieId).toList();
   }

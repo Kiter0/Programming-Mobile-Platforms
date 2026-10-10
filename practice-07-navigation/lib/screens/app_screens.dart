@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../models/movie.dart';
 import '../services/auth_service.dart';
 import '../services/cinema_data.dart';
 
@@ -25,7 +26,7 @@ class CinemaScaffold extends StatelessWidget {
           NavigationDestination(
             icon: Icon(Icons.movie_outlined),
             selectedIcon: Icon(Icons.movie),
-            label: 'Афіша',
+            label: 'Кіноафіша',
           ),
           NavigationDestination(
             icon: Icon(Icons.confirmation_number_outlined),
@@ -53,108 +54,76 @@ class MoviesScreen extends StatefulWidget {
 class _MoviesScreenState extends State<MoviesScreen> {
   DateTime _selectedDate = DateTime.now();
 
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-
-    final dateString = GoRouterState.of(context).uri.queryParameters['date'];
-    if (dateString != null) {
-      final parsedDate = DateTime.tryParse(dateString);
-      if (parsedDate != null) {
-        _selectedDate = parsedDate;
-      }
-    }
-  }
-
   String _formatDate(DateTime date) {
-    final day = date.day.toString().padLeft(2, '0');
-    final month = date.month.toString().padLeft(2, '0');
-    return '$day.$month.${date.year}';
-  }
-
-  String _dateParameter(DateTime date) {
-    final month = date.month.toString().padLeft(2, '0');
-    final day = date.day.toString().padLeft(2, '0');
-    return '${date.year}-$month-$day';
-  }
-
-  Future<void> _chooseDate() async {
-    final selected = await showDatePicker(
-      context: context,
-      initialDate: _selectedDate,
-      firstDate: DateTime.now().subtract(const Duration(days: 30)),
-      lastDate: DateTime.now().add(const Duration(days: 90)),
-      helpText: 'Оберіть дату сеансу',
-    );
-
-    if (!mounted || selected == null) return;
-
-    setState(() => _selectedDate = selected);
-
-    context.go(
-      Uri(
-        path: '/movies',
-        queryParameters: {'date': _dateParameter(selected)},
-      ).toString(),
-    );
+    return '${date.day.toString().padLeft(2, '0')}.'
+        '${date.month.toString().padLeft(2, '0')}.${date.year}';
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Кіноафіша'),
+        title: const Text('Афіша кінотеатру'),
         actions: [
           IconButton(
-            onPressed: _chooseDate,
             tooltip: 'Обрати дату',
+            onPressed: () async {
+              final date = await showDatePicker(
+                context: context,
+                initialDate: _selectedDate,
+                firstDate: DateTime.now().subtract(const Duration(days: 30)),
+                lastDate: DateTime.now().add(const Duration(days: 90)),
+              );
+              if (date != null && mounted) {
+                setState(() => _selectedDate = date);
+              }
+            },
             icon: const Icon(Icons.calendar_month),
           ),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
+      body: Column(
         children: [
-          Card(
-            child: ListTile(
-              leading: const Icon(Icons.event),
-              title: const Text('Дата сеансів'),
-              subtitle: Text(_formatDate(_selectedDate)),
-              trailing: const Icon(Icons.edit_calendar),
-              onTap: _chooseDate,
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                const Icon(Icons.event),
+                const SizedBox(width: 8),
+                Text('Дата: ${_formatDate(_selectedDate)}'),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
-          ...CinemaData.movies.map(
-            (movie) => Card(
-              clipBehavior: Clip.antiAlias,
-              margin: const EdgeInsets.only(bottom: 12),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(12),
-                leading: CircleAvatar(
-                  radius: 28,
-                  child: Text(
-                    movie.posterEmoji,
-                    style: const TextStyle(fontSize: 26),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              itemCount: CinemaData.movies.length,
+              itemBuilder: (context, index) {
+                final movie = CinemaData.movies[index];
+                final sessions = CinemaData.sessionsForMovie(movie.id);
+
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 12),
+                  child: ListTile(
+                    contentPadding: const EdgeInsets.all(12),
+                    leading: Text(
+                      movie.posterEmoji,
+                      style: const TextStyle(fontSize: 42),
+                    ),
+                    title: Text(movie.title),
+                    subtitle: Text(
+                      '${movie.genre} • ${movie.durationMinutes} хв\n'
+                      'Рейтинг: ${movie.rating} • '
+                      'Сеансів: ${sessions.length}',
+                    ),
+                    isThreeLine: true,
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => context.push(
+                      '/movies/${movie.id}?date=${_formatDate(_selectedDate)}',
+                    ),
                   ),
-                ),
-                title: Text(
-                  movie.title,
-                  style: const TextStyle(fontWeight: FontWeight.bold),
-                ),
-                subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 6),
-                  child: Text(
-                    '${movie.genre} • ${movie.durationMinutes} хв\n'
-                    'Рейтинг: ${movie.rating}',
-                  ),
-                ),
-                isThreeLine: true,
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.go(
-                  '/movies/${movie.id}?date=${_dateParameter(_selectedDate)}',
-                ),
-              ),
+                );
+              },
             ),
           ),
         ],
@@ -177,9 +146,7 @@ class MovieDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final movie = CinemaData.findMovie(movieId);
 
-    if (movie == null) {
-      return const NotFoundScreen();
-    }
+    if (movie == null) return const NotFoundScreen();
 
     final sessions = CinemaData.sessionsForMovie(movieId);
 
@@ -216,215 +183,43 @@ class MovieDetailScreen extends StatelessWidget {
                   leading: const Icon(Icons.schedule),
                   title: Text('${session.time} • ${session.hall}'),
                   subtitle: Text(
-                    '${session.ticketPrice.toStringAsFixed(0)} грн',
+                    '${session.ticketPrice.toStringAsFixed(0)} грн за місце',
                   ),
                   trailing: const Icon(Icons.event_seat),
-                  onTap: () async {
-                    final seats = await context.push<List<String>>(
-                      '/movies/$movieId/session/${session.id}/seats',
-                    );
+                  onTap: () {
+                    final destination =
+                        '/movies/$movieId/session/${session.id}/seats';
 
-                    if (!context.mounted || seats == null || seats.isEmpty) {
+                    if (!auth.isLoggedIn) {
+                      context.go(
+                        Uri(
+                          path: '/login',
+                          queryParameters: {'from': destination},
+                        ).toString(),
+                      );
                       return;
                     }
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text('Обрані місця: ${seats.join(', ')}'),
-                      ),
-                    );
+                    context.push<CinemaTicket>(destination).then((ticket) {
+                      if (!context.mounted || ticket == null) return;
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Квитки придбано: ${ticket.seats.join(', ')}',
+                          ),
+                          action: SnackBarAction(
+                            label: 'Мої квитки',
+                            onPressed: () => context.go('/tickets'),
+                          ),
+                        ),
+                      );
+                    });
                   },
                 ),
               ),
             ),
         ],
-      ),
-    );
-  }
-}
-
-class TicketsScreen extends StatelessWidget {
-  const TicketsScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Мої квитки')),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.confirmation_number_outlined, size: 64),
-              SizedBox(height: 16),
-              Text(
-                'Ваші придбані квитки відображатимуться тут.',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class ProfileScreen extends StatelessWidget {
-  final AuthService auth;
-
-  const ProfileScreen({super.key, required this.auth});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Профіль')),
-      body: ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          const CircleAvatar(radius: 42, child: Icon(Icons.person, size: 46)),
-          const SizedBox(height: 16),
-          Center(
-            child: Text(
-              auth.isAdmin
-                  ? 'Адміністратор'
-                  : auth.isLoggedIn
-                  ? 'Користувач'
-                  : 'Гість',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-          ),
-          const SizedBox(height: 24),
-          if (!auth.isLoggedIn)
-            FilledButton.icon(
-              onPressed: () => context.go('/login'),
-              icon: const Icon(Icons.login),
-              label: const Text('Увійти'),
-            )
-          else ...[
-            if (auth.isAdmin)
-              ListTile(
-                leading: const Icon(Icons.admin_panel_settings),
-                title: const Text('Панель адміністратора'),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => context.go('/admin'),
-              ),
-            OutlinedButton.icon(
-              onPressed: () {
-                auth.logout();
-                context.go('/profile');
-              },
-              icon: const Icon(Icons.logout),
-              label: const Text('Вийти'),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-}
-
-class LoginScreen extends StatelessWidget {
-  final AuthService auth;
-
-  const LoginScreen({super.key, required this.auth});
-
-  String _destination(BuildContext context) {
-    final from = GoRouterState.of(context).uri.queryParameters['from'];
-
-    if (from == null || !from.startsWith('/') || from == '/login') {
-      return '/movies';
-    }
-
-    if (from.startsWith('/admin') && !auth.isAdmin) {
-      return '/movies';
-    }
-
-    return from;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Вхід')),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 420),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Icon(Icons.local_movies, size: 72),
-                const SizedBox(height: 16),
-                Text(
-                  'Вітаємо в Cinema!',
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-                const SizedBox(height: 24),
-                FilledButton.icon(
-                  onPressed: () {
-                    auth.loginAsUser();
-                    context.go(_destination(context));
-                  },
-                  icon: const Icon(Icons.person),
-                  label: const Text('Увійти як користувач'),
-                ),
-                const SizedBox(height: 12),
-                OutlinedButton.icon(
-                  onPressed: () {
-                    auth.loginAsAdmin();
-                    context.go(_destination(context));
-                  },
-                  icon: const Icon(Icons.admin_panel_settings),
-                  label: const Text('Увійти як адміністратор'),
-                ),
-                const SizedBox(height: 12),
-                TextButton(
-                  onPressed: () => context.go('/movies'),
-                  child: const Text('Продовжити як гість'),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class AdminScreen extends StatelessWidget {
-  const AdminScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Панель адміністратора'),
-        leading: IconButton(
-          onPressed: () => context.go('/profile'),
-          icon: const Icon(Icons.arrow_back),
-        ),
-      ),
-      body: const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.admin_panel_settings, size: 64),
-              SizedBox(height: 16),
-              Text('Розділ адміністратора', style: TextStyle(fontSize: 22)),
-              SizedBox(height: 8),
-              Text(
-                'Ця сторінка доступна лише адміністратору.',
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -453,11 +248,13 @@ class _SeatsScreenState extends State<SeatsScreen> {
   Future<bool> _confirmLeave() async {
     if (_selectedSeats.isEmpty || _saved) return true;
 
-    final shouldLeave = await showDialog<bool>(
+    final result = await showDialog<bool>(
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: const Text('Вийти без збереження?'),
-        content: const Text('Ви вибрали місця, але ще не підтвердили їх.'),
+        content: const Text(
+          'Ви вибрали місця. Якщо вийти зараз, вибір буде втрачено.',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(false),
@@ -471,13 +268,36 @@ class _SeatsScreenState extends State<SeatsScreen> {
       ),
     );
 
-    return shouldLeave ?? false;
+    return result ?? false;
   }
 
   @override
   Widget build(BuildContext context) {
     final movie = CinemaData.findMovie(widget.movieId);
     final session = CinemaData.findSession(widget.sessionId);
+
+    if (!widget.auth.isLoggedIn) {
+      return Scaffold(
+        appBar: AppBar(title: const Text('Потрібен вхід')),
+        body: Center(
+          child: FilledButton(
+            onPressed: () {
+              final destination =
+                  '/movies/${widget.movieId}/session/'
+                  '${widget.sessionId}/seats';
+
+              context.go(
+                Uri(
+                  path: '/login',
+                  queryParameters: {'from': destination},
+                ).toString(),
+              );
+            },
+            child: const Text('Увійти для придбання квитків'),
+          ),
+        ),
+      );
+    }
 
     if (movie == null || session == null) {
       return const NotFoundScreen();
@@ -488,9 +308,7 @@ class _SeatsScreenState extends State<SeatsScreen> {
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
 
-        final shouldLeave = await _confirmLeave();
-
-        if (shouldLeave && context.mounted) {
+        if (await _confirmLeave() && context.mounted) {
           context.pop();
         }
       },
@@ -549,7 +367,8 @@ class _SeatsScreenState extends State<SeatsScreen> {
                                       horizontal: 3,
                                     ),
                                     child: _buildSeat(
-                                      '${String.fromCharCode(64 + row)}$number',
+                                      '${String.fromCharCode(64 + row)}'
+                                      '$number',
                                     ),
                                   ),
                               ],
@@ -566,12 +385,14 @@ class _SeatsScreenState extends State<SeatsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     Text(
-                      'Обрані місця: ${_selectedSeats.isEmpty ? 'немає' : (_selectedSeats.toList()..sort()).join(', ')}',
+                      'Обрані місця: '
+                      '${_selectedSeats.isEmpty ? 'немає' : (_selectedSeats.toList()..sort()).join(', ')}',
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 8),
                     Text(
-                      'До сплати: ${(_selectedSeats.length * session.ticketPrice).toStringAsFixed(0)} грн',
+                      'До сплати: '
+                      '${(_selectedSeats.length * session.ticketPrice).toStringAsFixed(0)} грн',
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(height: 12),
@@ -580,10 +401,21 @@ class _SeatsScreenState extends State<SeatsScreen> {
                           ? null
                           : () {
                               final seats = _selectedSeats.toList()..sort();
+
+                              final ticket = CinemaTicket(
+                                id: DateTime.now().microsecondsSinceEpoch
+                                    .toString(),
+                                movieId: widget.movieId,
+                                sessionId: widget.sessionId,
+                                seats: seats,
+                                purchasedAt: DateTime.now(),
+                              );
+
+                              CinemaData.addTicket(ticket);
                               _saved = true;
-                              context.pop(seats);
+                              context.pop<CinemaTicket>(ticket);
                             },
-                      child: const Text('Підтвердити вибір місць'),
+                      child: const Text('Придбати квитки'),
                     ),
                   ],
                 ),
@@ -627,6 +459,292 @@ class _SeatsScreenState extends State<SeatsScreen> {
   }
 }
 
+class TicketsScreen extends StatelessWidget {
+  const TicketsScreen({super.key});
+
+  String _formatDate(DateTime date) {
+    return '${date.day.toString().padLeft(2, '0')}.'
+        '${date.month.toString().padLeft(2, '0')}.${date.year}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final tickets = CinemaData.purchasedTickets.reversed.toList();
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Мої квитки')),
+      body: tickets.isEmpty
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.confirmation_number_outlined, size: 72),
+                    const SizedBox(height: 16),
+                    Text(
+                      'У вас поки немає квитків',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                    const SizedBox(height: 8),
+                    const Text(
+                      'Оберіть фільм в афіші та придбайте квитки.',
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 16),
+                    FilledButton(
+                      onPressed: () => context.go('/movies'),
+                      child: const Text('Перейти до афіші'),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : ListView.builder(
+              padding: const EdgeInsets.all(16),
+              itemCount: tickets.length,
+              itemBuilder: (context, index) {
+                final ticket = tickets[index];
+                final movie = CinemaData.findMovie(ticket.movieId);
+                final session = CinemaData.findSession(ticket.sessionId);
+
+                if (movie == null || session == null) {
+                  return const SizedBox.shrink();
+                }
+
+                final total = ticket.seats.length * session.ticketPrice;
+
+                return Card(
+                  margin: const EdgeInsets.only(bottom: 16),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              movie.posterEmoji,
+                              style: const TextStyle(fontSize: 36),
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                movie.title,
+                                style: Theme.of(context).textTheme.titleLarge,
+                              ),
+                            ),
+                            const Icon(
+                              Icons.confirmation_number,
+                              color: Colors.green,
+                            ),
+                          ],
+                        ),
+                        const Divider(height: 24),
+                        Text('Час сеансу: ${session.time}'),
+                        Text('Зал: ${session.hall}'),
+                        Text('Місця: ${ticket.seats.join(', ')}'),
+                        Text('Придбано: ${_formatDate(ticket.purchasedAt)}'),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Загальна вартість: '
+                          '${total.toStringAsFixed(0)} грн',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            ),
+    );
+  }
+}
+
+class ProfileScreen extends StatelessWidget {
+  final AuthService auth;
+
+  const ProfileScreen({super.key, required this.auth});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Профіль')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const CircleAvatar(radius: 40, child: Icon(Icons.person, size: 44)),
+          const SizedBox(height: 16),
+          Center(
+            child: Text(
+              auth.isAdmin
+                  ? 'Адміністратор'
+                  : auth.isLoggedIn
+                  ? 'Користувач'
+                  : 'Гість',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+          ),
+          const SizedBox(height: 24),
+          if (!auth.isLoggedIn)
+            FilledButton.icon(
+              onPressed: () => context.go('/login'),
+              icon: const Icon(Icons.login),
+              label: const Text('Увійти'),
+            )
+          else ...[
+            if (auth.isAdmin)
+              ListTile(
+                leading: const Icon(Icons.admin_panel_settings),
+                title: const Text('Панель адміністратора'),
+                onTap: () => context.go('/admin'),
+              ),
+            ListTile(
+              leading: const Icon(Icons.confirmation_number),
+              title: const Text('Мої квитки'),
+              onTap: () => context.go('/tickets'),
+            ),
+            FilledButton.icon(
+              onPressed: () {
+                auth.logout();
+                context.go('/profile');
+              },
+              icon: const Icon(Icons.logout),
+              label: const Text('Вийти з облікового запису'),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class LoginScreen extends StatelessWidget {
+  final AuthService auth;
+
+  const LoginScreen({super.key, required this.auth});
+
+  @override
+  Widget build(BuildContext context) {
+    final from = GoRouterState.of(context).uri.queryParameters['from'];
+
+    void signIn(bool admin) {
+      if (admin) {
+        auth.loginAsAdmin();
+      } else {
+        auth.loginAsUser();
+      }
+
+      final destination = Uri.tryParse(from ?? '');
+      final path = destination?.path;
+
+      if (path != null &&
+          path.startsWith('/') &&
+          path != '/login' &&
+          (!path.startsWith('/admin') || auth.isAdmin)) {
+        context.go(destination.toString());
+      } else {
+        context.go('/movies');
+      }
+    }
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Вхід')),
+      body: Center(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 420),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const Icon(Icons.local_movies, size: 72),
+                const SizedBox(height: 16),
+                Text(
+                  'Увійдіть до кінотеатру',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+                const SizedBox(height: 24),
+                FilledButton(
+                  onPressed: () => signIn(false),
+                  child: const Text('Увійти як користувач'),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton(
+                  onPressed: () => signIn(true),
+                  child: const Text('Увійти як адміністратор'),
+                ),
+                const SizedBox(height: 12),
+                TextButton(
+                  onPressed: () => context.go('/movies'),
+                  child: const Text('Продовжити як гість'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class AdminScreen extends StatelessWidget {
+  const AdminScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Панель адміністратора')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          const Icon(Icons.admin_panel_settings, size: 72),
+          const SizedBox(height: 16),
+          Text(
+            'Панель адміністратора',
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Доступ до цього розділу мають лише адміністратори.',
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 24),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.movie),
+              title: const Text('Фільмів у каталозі'),
+              trailing: Text('${CinemaData.movies.length}'),
+            ),
+          ),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.schedule),
+              title: const Text('Сеансів у розкладі'),
+              trailing: Text('${CinemaData.sessions.length}'),
+            ),
+          ),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.confirmation_number),
+              title: const Text('Придбаних квитків'),
+              trailing: Text('${CinemaData.purchasedTickets.length}'),
+            ),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton(
+            onPressed: () => context.go('/movies'),
+            child: const Text('Повернутися до афіші'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class NotFoundScreen extends StatelessWidget {
   const NotFoundScreen({super.key});
 
@@ -640,9 +758,12 @@ class NotFoundScreen extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.search_off, size: 64),
+              const Icon(Icons.search_off, size: 72),
               const SizedBox(height: 16),
-              const Text('Такої сторінки або фільму не існує.'),
+              Text(
+                'Такої сторінки не існує',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 16),
               FilledButton(
                 onPressed: () => context.go('/movies'),
