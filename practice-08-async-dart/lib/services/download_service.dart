@@ -12,8 +12,6 @@ class DownloadService {
 
   final Map<int, Timer> _timers = {};
   final Map<int, StreamController<double>> _controllers = {};
-  final Map<int, double> _progress = {};
-
   bool _disposed = false;
 
   Future<List<DownloadFile>> loadFiles() async {
@@ -44,9 +42,8 @@ class DownloadService {
 
     cancelDownload(fileId);
 
-    final controller = StreamController<double>();
+    final controller = StreamController<double>.broadcast();
     _controllers[fileId] = controller;
-    _progress[fileId] = 0;
 
     var progress = 0.0;
 
@@ -63,31 +60,28 @@ class DownloadService {
         _timers.remove(fileId);
 
         controller.addError(StateError('Помилка завантаження файлу'));
-
         controller.close();
+        _controllers.remove(fileId);
         return;
       }
 
       progress += 0.04 + _random.nextDouble() * 0.10;
+      if (progress > 1) progress = 1;
 
-      if (progress >= 1) {
-        progress = 1;
-      }
-
-      _progress[fileId] = progress;
       controller.add(progress);
 
       if (progress >= 1) {
         timer.cancel();
         _timers.remove(fileId);
         controller.close();
+        _controllers.remove(fileId);
       }
     });
 
     return controller.stream.timeout(
       const Duration(seconds: 3),
       onTimeout: (sink) {
-        sink.addError(TimeoutException('Прогрес завантаження відсутній'));
+        sink.addError(TimeoutException('Немає оновлень прогресу завантаження'));
         sink.close();
       },
     );
@@ -97,23 +91,18 @@ class DownloadService {
     _timers.remove(fileId)?.cancel();
 
     final controller = _controllers.remove(fileId);
-
     if (controller != null && !controller.isClosed) {
       controller.close();
     }
-
-    _progress.remove(fileId);
   }
 
   void dispose() {
     if (_disposed) return;
-
     _disposed = true;
 
     for (final timer in _timers.values) {
       timer.cancel();
     }
-
     _timers.clear();
 
     for (final controller in _controllers.values) {
@@ -121,8 +110,6 @@ class DownloadService {
         controller.close();
       }
     }
-
     _controllers.clear();
-    _progress.clear();
   }
 }
