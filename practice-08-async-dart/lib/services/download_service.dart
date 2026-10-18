@@ -1,3 +1,4 @@
+
 import 'dart:async';
 import 'dart:math';
 
@@ -42,47 +43,55 @@ class DownloadService {
 
     cancelDownload(fileId);
 
-    final controller = StreamController<double>.broadcast();
+    final controller = StreamController<double>();
     _controllers[fileId] = controller;
 
     var progress = 0.0;
 
-    _timers[fileId] = Timer.periodic(const Duration(milliseconds: 180), (
-      timer,
-    ) {
-      if (_disposed || controller.isClosed) {
-        timer.cancel();
-        return;
-      }
+    _timers[fileId] = Timer.periodic(
+      const Duration(milliseconds: 180),
+      (timer) {
+        if (_disposed || controller.isClosed) {
+          timer.cancel();
+          return;
+        }
 
-      if (_random.nextDouble() < failureRate / 20) {
-        timer.cancel();
-        _timers.remove(fileId);
+        if (_random.nextDouble() < failureRate / 20) {
+          timer.cancel();
+          _timers.remove(fileId);
 
-        controller.addError(StateError('Помилка завантаження файлу'));
-        controller.close();
-        _controllers.remove(fileId);
-        return;
-      }
+          controller.addError(
+            StateError('Помилка завантаження файлу'),
+          );
+          unawaited(controller.close());
+          _controllers.remove(fileId);
+          return;
+        }
 
-      progress += 0.04 + _random.nextDouble() * 0.10;
-      if (progress > 1) progress = 1;
+        progress = min(
+          1.0,
+          progress + 0.04 + _random.nextDouble() * 0.10,
+        );
 
-      controller.add(progress);
+        controller.add(progress);
 
-      if (progress >= 1) {
-        timer.cancel();
-        _timers.remove(fileId);
-        controller.close();
-        _controllers.remove(fileId);
-      }
-    });
+        if (progress >= 1.0) {
+          timer.cancel();
+          _timers.remove(fileId);
+          unawaited(controller.close());
+          _controllers.remove(fileId);
+        }
+      },
+    );
 
     return controller.stream.timeout(
       const Duration(seconds: 3),
       onTimeout: (sink) {
-        sink.addError(TimeoutException('Немає оновлень прогресу завантаження'));
+        sink.addError(
+          TimeoutException('Немає оновлень прогресу завантаження'),
+        );
         sink.close();
+        cancelDownload(fileId);
       },
     );
   }
@@ -91,8 +100,9 @@ class DownloadService {
     _timers.remove(fileId)?.cancel();
 
     final controller = _controllers.remove(fileId);
+
     if (controller != null && !controller.isClosed) {
-      controller.close();
+      unawaited(controller.close());
     }
   }
 
@@ -107,7 +117,7 @@ class DownloadService {
 
     for (final controller in _controllers.values) {
       if (!controller.isClosed) {
-        controller.close();
+        unawaited(controller.close());
       }
     }
     _controllers.clear();
