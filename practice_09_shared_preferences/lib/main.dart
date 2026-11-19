@@ -62,7 +62,6 @@ class _SettingsAppState extends State<SettingsApp> {
           brightness: Brightness.light,
         ),
         useMaterial3: true,
-        textTheme: ThemeData.light().textTheme.apply(fontSizeFactor: fontScale),
       ),
       darkTheme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
@@ -70,8 +69,14 @@ class _SettingsAppState extends State<SettingsApp> {
           brightness: Brightness.dark,
         ),
         useMaterial3: true,
-        textTheme: ThemeData.dark().textTheme.apply(fontSizeFactor: fontScale),
       ),
+      builder: (context, child) {
+        return MediaQuery(
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(fontScale)),
+          child: child!,
+        );
+      },
       home: SettingsScreen(
         preferences: widget.preferences,
         settings: _settings,
