@@ -6,6 +6,7 @@ import '../models/journal_entry.dart';
 import '../models/tag.dart';
 import '../widgets/journal_entry_card.dart';
 import 'entry_form_screen.dart';
+import 'statistics_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -85,6 +86,13 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     _loadData();
+  }
+
+  Future<void> _openStatistics() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const StatisticsScreen()),
+    );
   }
 
   Future<void> _toggleFavorite(JournalEntry entry) async {
@@ -445,6 +453,14 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         actions: [
           IconButton(
+            tooltip: 'Open statistics',
+            onPressed: _openStatistics,
+            icon: const Icon(
+              Icons.bar_chart,
+              color: Color(0xFF567C68),
+            ),
+          ),
+          IconButton(
             tooltip: 'Open calendar',
             onPressed: _openCalendar,
             icon: const Icon(
@@ -496,9 +512,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-// -----------------------------------------------------------------------------
 // Calendar screen
-// -----------------------------------------------------------------------------
 
 class CalendarScreen extends StatefulWidget {
   const CalendarScreen({super.key});
@@ -513,12 +527,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
   List<JournalEntry> _entries = [];
   bool _isLoading = true;
 
-  DateTime _focusedMonth = DateTime(
-    DateTime.now().year,
-    DateTime.now().month,
-  );
-
-  DateTime _selectedDate = DateTime.now();
+  late DateTime _focusedMonth;
+  late DateTime _selectedDate;
 
   static const List<String> _weekDays = [
     'Mon',
@@ -542,6 +552,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
+    debugPrint('DEVICE DATE: ${DateTime.now()}');
+
+    final today = DateUtils.dateOnly(DateTime.now());
+
+    _focusedMonth = DateTime(today.year, today.month);
+    _selectedDate = today;
+
     _loadEntries();
   }
 
@@ -582,6 +599,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
         _focusedMonth.year,
         _focusedMonth.month + offset,
       );
+    });
+  }
+
+  void _goToToday() {
+    final today = DateUtils.dateOnly(DateTime.now());
+
+    setState(() {
+      _focusedMonth = DateTime(today.year, today.month);
+      _selectedDate = today;
     });
   }
 
@@ -636,6 +662,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
           ),
         ),
         IconButton(
+          tooltip: 'Go to today',
+          onPressed: _goToToday,
+          icon: const Icon(Icons.today),
+        ),
+        IconButton(
           onPressed: () => _changeMonth(1),
           icon: const Icon(Icons.chevron_right),
         ),
@@ -649,7 +680,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
       _focusedMonth.month,
     );
 
-    // DateTime.weekday: Monday = 1, Sunday = 7.
     final firstWeekday = DateTime(
       _focusedMonth.year,
       _focusedMonth.month,
