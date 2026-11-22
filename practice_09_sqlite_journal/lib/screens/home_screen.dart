@@ -7,6 +7,7 @@ import '../models/tag.dart';
 import '../widgets/journal_entry_card.dart';
 import 'entry_form_screen.dart';
 import 'statistics_screen.dart';
+import 'tag_management_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -93,6 +94,17 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       MaterialPageRoute(builder: (_) => const StatisticsScreen()),
     );
+  }
+
+  Future<void> _openTagManagement() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => const TagManagementScreen(),
+      ),
+    );
+
+    _loadData();
   }
 
   Future<void> _toggleFavorite(JournalEntry entry) async {
@@ -453,6 +465,14 @@ class _HomeScreenState extends State<HomeScreen> {
         elevation: 0,
         actions: [
           IconButton(
+            tooltip: 'Manage tags',
+            onPressed: _openTagManagement,
+            icon: const Icon(
+              Icons.label_outline,
+              color: Color(0xFF567C68),
+            ),
+          ),
+          IconButton(
             tooltip: 'Open statistics',
             onPressed: _openStatistics,
             icon: const Icon(
@@ -552,7 +572,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
   @override
   void initState() {
     super.initState();
-    debugPrint('DEVICE DATE: ${DateTime.now()}');
 
     final today = DateUtils.dateOnly(DateTime.now());
 
