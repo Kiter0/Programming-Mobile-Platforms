@@ -16,6 +16,22 @@ class _HomeScreenState extends State<HomeScreen> {
   String _priorityFilter = 'all';
   String _statusFilter = 'all';
 
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController =
+      TextEditingController();
+  final TextEditingController _subtasksController = TextEditingController();
+  final TextEditingController _newSubtaskController =
+      TextEditingController();
+
+  @override
+  void dispose() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _subtasksController.dispose();
+    _newSubtaskController.dispose();
+    super.dispose();
+  }
+
   List<Task> get _tasks {
     return widget.repository.getTasks(
       priority: _priorityFilter,
@@ -28,13 +44,9 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _showTaskDialog({Task? task}) async {
-    final titleController = TextEditingController(text: task?.title ?? '');
-    final descriptionController = TextEditingController(
-      text: task?.description ?? '',
-    );
-    final subtasksController = TextEditingController(
-      text: task?.subtasks.join('\n') ?? '',
-    );
+    _titleController.text = task?.title ?? '';
+    _descriptionController.text = task?.description ?? '';
+    _subtasksController.text = task?.subtasks.join('\n') ?? '';
 
     String priority = task?.priority ?? 'medium';
     DateTime dueDate =
@@ -56,7 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       TextFormField(
-                        controller: titleController,
+                        controller: _titleController,
                         decoration: const InputDecoration(
                           labelText: 'Назва задачі',
                           border: OutlineInputBorder(),
@@ -70,7 +82,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
-                        controller: descriptionController,
+                        controller: _descriptionController,
                         decoration: const InputDecoration(
                           labelText: 'Опис',
                           border: OutlineInputBorder(),
@@ -108,30 +120,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       ListTile(
                         contentPadding: EdgeInsets.zero,
                         title: const Text('Дата виконання'),
-                        subtitle: Text(
-                          '${dueDate.day.toString().padLeft(2, '0')}.'
-                          '${dueDate.month.toString().padLeft(2, '0')}.'
-                          '${dueDate.year}',
-                        ),
+                        subtitle: Text(_formatDate(dueDate)),
                         trailing: const Icon(Icons.calendar_month),
                         onTap: () async {
                           final selected = await showDatePicker(
-                            context: dialogContext,
+                            context: context,
                             initialDate: dueDate,
                             firstDate: DateTime(2000),
                             lastDate: DateTime(2100),
                           );
 
-                          if (selected != null) {
+                          if (selected != null && context.mounted) {
                             setDialogState(() {
-                              dueDate = selected;
+                              dueDate = DateTime(
+                                selected.year,
+                                selected.month,
+                                selected.day,
+                              );
                             });
                           }
                         },
                       ),
                       const SizedBox(height: 12),
                       TextFormField(
-                        controller: subtasksController,
+                        controller: _subtasksController,
                         decoration: const InputDecoration(
                           labelText: 'Підзадачі',
                           hintText: 'Кожну підзадачу з нового рядка',
@@ -165,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (result == true && mounted) {
       try {
-        final subtasks = subtasksController.text
+        final subtasks = _subtasksController.text
             .split('\n')
             .map((item) => item.trim())
             .where((item) => item.isNotEmpty)
@@ -174,8 +186,8 @@ class _HomeScreenState extends State<HomeScreen> {
         if (task == null) {
           await widget.repository.addTask(
             Task(
-              title: titleController.text.trim(),
-              description: descriptionController.text.trim(),
+              title: _titleController.text.trim(),
+              description: _descriptionController.text.trim(),
               dueDate: dueDate,
               priority: priority,
               subtasks: subtasks,
@@ -183,8 +195,8 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         } else {
           task
-            ..title = titleController.text.trim()
-            ..description = descriptionController.text.trim()
+            ..title = _titleController.text.trim()
+            ..description = _descriptionController.text.trim()
             ..dueDate = dueDate
             ..priority = priority
             ..subtasks = subtasks;
@@ -197,10 +209,6 @@ class _HomeScreenState extends State<HomeScreen> {
         _showMessage(error.toString());
       }
     }
-
-    titleController.dispose();
-    descriptionController.dispose();
-    subtasksController.dispose();
   }
 
   Future<void> _toggleTask(Task task) async {
@@ -242,25 +250,28 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _addSubtask(Task task) async {
-    final controller = TextEditingController();
+    _newSubtaskController.clear();
 
     final value = await showDialog<String>(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         title: const Text('Нова підзадача'),
         content: TextField(
-          controller: controller,
+          controller: _newSubtaskController,
           autofocus: true,
           decoration: const InputDecoration(labelText: 'Назва підзадачі'),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () => Navigator.pop(dialogContext),
             child: const Text('Скасувати'),
           ),
           FilledButton(
             onPressed: () {
-              Navigator.pop(context, controller.text.trim());
+              Navigator.pop(
+                dialogContext,
+                _newSubtaskController.text.trim(),
+              );
             },
             child: const Text('Додати'),
           ),
@@ -268,9 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
 
-    controller.dispose();
-
-    if (value == null || value.trim().isEmpty) return;
+    if (value == null || value.trim().isEmpty || !mounted) return;
 
     try {
       await widget.repository.addSubtask(task, value);
@@ -323,8 +332,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildTaskCard(Task task) {
-    final isOverdue =
-        !task.isCompleted && task.dueDate.isBefore(DateTime.now());
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final taskDate = DateTime(
+      task.dueDate.year,
+      task.dueDate.month,
+      task.dueDate.day,
+    );
+
+    final isOverdue = !task.isCompleted && taskDate.isBefore(today);
 
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
