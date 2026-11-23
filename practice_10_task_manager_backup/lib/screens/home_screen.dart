@@ -79,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       const SizedBox(height: 12),
                       DropdownButtonFormField<String>(
-                        value: priority,
+                        initialValue: priority,
                         decoration: const InputDecoration(
                           labelText: 'Пріоритет',
                           border: OutlineInputBorder(),
@@ -454,7 +454,7 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               children: [
                 DropdownButtonFormField<String>(
-                  value: _priorityFilter,
+                  initialValue: _priorityFilter,
                   decoration: const InputDecoration(
                     labelText: 'Фільтр за пріоритетом',
                     border: OutlineInputBorder(),
