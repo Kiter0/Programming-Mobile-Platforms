@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 
 import 'database/hive_manager.dart';
 import 'repositories/task_repository.dart';
+import 'screens/home_screen.dart';
 import 'services/analytics_service.dart';
 import 'services/backup_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Ініціалізація локального сховища.
   await HiveManager.initialize();
 
   final repository = TaskRepository();
@@ -62,14 +62,7 @@ class MyApp extends StatelessWidget {
           elevation: 0,
         ),
       ),
-      home: const Scaffold(
-        body: Center(
-          child: Text(
-            'Менеджер завдань',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-        ),
-      ),
+      home: HomeScreen(repository: repository),
     );
   }
 }
