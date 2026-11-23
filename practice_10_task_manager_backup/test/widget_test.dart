@@ -1,30 +1,43 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 import 'package:practice_10_task_manager_backup/main.dart';
+import 'package:practice_10_task_manager_backup/database/hive_manager.dart';
+import 'package:practice_10_task_manager_backup/repositories/task_repository.dart';
+import 'package:practice_10_task_manager_backup/services/analytics_service.dart';
+import 'package:practice_10_task_manager_backup/services/backup_service.dart';
+import 'package:practice_10_task_manager_backup/models/task.dart';
+import 'package:practice_10_task_manager_backup/models/task_adapter.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  TestWidgetsFlutterBinding.ensureInitialized();
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  setUpAll(() async {
+    Hive.init('./test_hive');
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    if (!Hive.isAdapterRegistered(3)) {
+      Hive.registerAdapter(TaskAdapter());
+    }
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    await Hive.openBox<Task>(HiveManager.tasksBoxName);
+  });
+
+  tearDownAll(() async {
+    await Hive.close();
+  });
+
+  testWidgets('Застосунок запускається', (tester) async {
+    final repository = TaskRepository();
+
+    await tester.pumpWidget(
+      MyApp(
+        repository: repository,
+        backupService: BackupService(repository),
+        analyticsService: AnalyticsService(repository),
+      ),
+    );
+
+    expect(find.text('Менеджер завдань'), findsOneWidget);
   });
 }
