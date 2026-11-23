@@ -1,12 +1,16 @@
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
+import 'package:flutter/foundation.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._internal();
 
   static Database? _database;
 
-  DatabaseHelper._internal();
+    DatabaseHelper._internal();
+
+    @visibleForTesting
+    DatabaseHelper.forTesting();
 
   Future<Database> get database async {
     if (_database != null) {
