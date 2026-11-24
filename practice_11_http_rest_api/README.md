@@ -1,17 +1,94 @@
-# practice_11_http_rest_api
+# Практична робота №11.1 Робота з HTTP REST API
 
-A new Flutter project.
+## Тема роботи
 
-## Getting Started
+Робота з HTTP REST API у Flutter. Отримання, відображення, створення, редагування та видалення даних за допомогою HTTP-запитів.
 
-This project is a starting point for a Flutter application.
+## Мета роботи
 
-A few resources to get you started if this is your first Flutter project:
+Ознайомитися з принципами взаємодії мобільного застосунку із REST API, навчитися виконувати HTTP-запити, обробляти JSON-дані та реалізовувати основні CRUD-операції.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Варіант завдання
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+**Варіант 1 — User Manager.**
+
+Розробити мобільний застосунок для керування користувачами з використанням API [JSONPlaceholder](https://jsonplaceholder.typicode.com/users).
+
+## Використані технології
+
+- Flutter та мова програмування Dart.
+- Пакет `http` для виконання HTTP-запитів.
+- JSON для обміну даними із сервером.
+- REST API JSONPlaceholder.
+- Пакет `url_launcher` для відкриття посилань на карту.
+- Material Design для побудови інтерфейсу.
+
+## Реалізований функціонал
+
+1. Отримання списку користувачів із REST API.
+2. Відображення інформації про користувачів.
+3. Пошук користувачів за іменем.
+4. Перегляд детальної інформації про користувача.
+5. Відкриття місцезнаходження користувача на карті.
+6. Створення нового користувача.
+7. Редагування інформації про користувача.
+8. Видалення користувача з підтвердженням дії.
+9. Оновлення списку користувачів за допомогою Pull-to-Refresh.
+10. Відображення станів завантаження, помилок та порожнього списку.
+11. Обробка помилок HTTP-запитів і тайм-аутів.
+
+## Структура проєкту
+
+```text
+lib/
+├── models/
+│   └── user.dart
+├── screens/
+│   ├── list_screen.dart
+│   ├── detail_screen.dart
+│   └── create_edit_screen.dart
+├── services/
+│   └── api_service.dart
+├── widgets/
+│   ├── user_card.dart
+│   └── error_widget.dart
+└── main.dart
+```
+
+## Особливості роботи API
+
+У проєкті використовується JSONPlaceholder — тестовий REST API.
+
+Сервіс дозволяє виконувати GET, POST, PUT/PATCH та DELETE-запити. Однак JSONPlaceholder не зберігає зміни на сервері. Тому створені, відредаговані та видалені користувачі відображаються локально, але після повторного завантаження списку відновлюються початкові дані сервера.
+
+## Скріншоти роботи застосунку
+
+Скріншоти знаходяться в папці `screenshots/` у корені проєкту.
+
+## Запуск проєкту
+
+1. Відкрити папку проєкту у Visual Studio Code або Android Studio.
+2. Виконати команду:
+
+```bash
+flutter pub get
+```
+
+3. Запустити емулятор Android або підключити пристрій.
+4. Виконати команду:
+
+```bash
+flutter run
+```
+
+## Висновок
+
+Під час виконання практичної роботи було розроблено Flutter-застосунок для керування користувачами з використанням HTTP REST API. Реалізовано отримання та обробку JSON-даних, CRUD-операції, пошук, перегляд детальної інформації, оновлення списку та обробку мережевих помилок. Отримано практичні навички роботи з HTTP-запитами та взаємодії мобільного застосунку із зовнішнім API.
+
+## Використання штучного інтелекту
+
+Під час виконання практичної роботи використовувався **ChatGPT (OpenAI)**.
+
+**Мета використання:** допомога в розробці Flutter-застосунку для роботи з HTTP REST API, створенні моделей даних, реалізації HTTP-запитів та CRUD-операцій, налагодженні коду й перевірці працездатності застосунку.
+
+Штучний інтелект використовувався як допоміжний інструмент під час розробки проєкту.
