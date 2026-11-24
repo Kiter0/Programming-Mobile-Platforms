@@ -57,6 +57,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       if (cachedUser != null && mounted) {
         _setUser(cachedUser);
+
         setState(() {
           _isLoading = false;
         });
@@ -133,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
-  Future<void> _changePassword() async {
+  Future<void> _changePassword(BuildContext dialogContext) async {
     final newPassword = _passwordController.text;
 
     if (newPassword.length < 6) {
@@ -149,11 +150,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       _passwordController.clear();
 
-      if (!mounted) return;
+      if (!mounted || !dialogContext.mounted) return;
 
-      Navigator.pop(context);
+      Navigator.pop(dialogContext);
       _showMessage('Запит на зміну пароля виконано');
     } catch (error) {
+      if (!mounted) return;
+
       _showMessage('Помилка зміни пароля: $error');
     }
   }
@@ -180,7 +183,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: const Text('Скасувати'),
             ),
             ElevatedButton(
-              onPressed: _changePassword,
+              onPressed: () => _changePassword(dialogContext),
               child: const Text('Змінити'),
             ),
           ],
@@ -309,7 +312,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: TextStyle(color: Colors.grey[600]),
                   ),
                   const SizedBox(height: 32),
-
                   TextFormField(
                     controller: _firstNameController,
                     enabled: _isEditing,
@@ -320,7 +322,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-
                   TextFormField(
                     controller: _lastNameController,
                     enabled: _isEditing,
@@ -331,7 +332,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 16),
-
                   TextFormField(
                     controller: _emailController,
                     enabled: _isEditing,
@@ -356,7 +356,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     },
                   ),
                   const SizedBox(height: 24),
-
                   ElevatedButton.icon(
                     onPressed: _isSaving
                         ? null
@@ -378,28 +377,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               : 'Редагувати профіль',
                     ),
                   ),
-
                   if (_isEditing)
                     TextButton(
                       onPressed: () {
                         _setUser(_user!);
+
                         setState(() {
                           _isEditing = false;
                         });
                       },
                       child: const Text('Скасувати редагування'),
                     ),
-
                   const SizedBox(height: 12),
-
                   OutlinedButton.icon(
                     onPressed: _showChangePasswordDialog,
                     icon: const Icon(Icons.lock_reset),
                     label: const Text('Змінити пароль'),
                   ),
-
                   const SizedBox(height: 12),
-
                   OutlinedButton.icon(
                     onPressed: _logout,
                     icon: const Icon(Icons.logout),
