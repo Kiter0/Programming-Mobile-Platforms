@@ -8,11 +8,24 @@ class AuthInterceptor extends Interceptor {
 
   AuthInterceptor(this.tokenStorage, this.dio);
 
+  // Публічні маршрути ReqRes, яким не потрібна авторизація.
+  bool _isPublicEndpoint(RequestOptions options) {
+    final path = options.path;
+
+    return path == '/login' ||
+        path == '/register' ||
+        path.startsWith('/users/');
+  }
+
   @override
   Future<void> onRequest(
     RequestOptions options,
     RequestInterceptorHandler handler,
   ) async {
+    if (_isPublicEndpoint(options)) {
+      return handler.next(options);
+    }
+
     final token = await tokenStorage.getAccessToken();
 
     if (token != null && token.isNotEmpty) {
@@ -27,9 +40,12 @@ class AuthInterceptor extends Interceptor {
     Response response,
     ResponseInterceptorHandler handler,
   ) async {
-    // Перевіряємо, чи сервер повернув помилку 401.
-    if (response.statusCode != 401 ||
-        response.requestOptions.extra['auth_retry'] == true) {
+    final requestOptions = response.requestOptions;
+
+    // Для публічних маршрутів оновлення токена не потрібне.
+    if (_isPublicEndpoint(requestOptions) ||
+        response.statusCode != 401 ||
+        requestOptions.extra['auth_retry'] == true) {
       return handler.next(response);
     }
 
@@ -41,7 +57,6 @@ class AuthInterceptor extends Interceptor {
         return handler.next(response);
       }
 
-      // Окремий Dio, щоб уникнути повторного виклику interceptor.
       final refreshDio = Dio(
         BaseOptions(
           baseUrl: dio.options.baseUrl,
@@ -65,19 +80,16 @@ class AuthInterceptor extends Interceptor {
       final newRefreshToken =
           data['refreshToken'] ?? data['refresh_token'] ?? refreshToken;
 
-      if (newAccessToken == null || newAccessToken.toString().isEmpty) {
+      if (newAccessToken == null ||
+          newAccessToken.toString().isEmpty) {
         await tokenStorage.clearTokens();
         return handler.next(response);
       }
 
-      // Зберігаємо оновлені токени.
       await tokenStorage.saveTokens(
         accessToken: newAccessToken.toString(),
         refreshToken: newRefreshToken.toString(),
       );
-
-      // Повторюємо початковий запит.
-      final requestOptions = response.requestOptions;
 
       requestOptions.headers['Authorization'] =
           'Bearer ${newAccessToken.toString()}';

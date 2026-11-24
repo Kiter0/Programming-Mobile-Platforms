@@ -11,9 +11,27 @@ class ProfileService {
   Future<User> getProfile(int userId) async {
     final response = await dio.get('/users/$userId');
 
-    final data = response.data['data'] as Map<String, dynamic>;
+    if (response.statusCode == null ||
+        response.statusCode! < 200 ||
+        response.statusCode! >= 300) {
+      throw Exception(
+        'Сервер повернув помилку ${response.statusCode}',
+      );
+    }
 
-    return User.fromJson(data);
+    final responseData = response.data;
+
+    if (responseData is! Map<String, dynamic>) {
+      throw Exception('Сервер повернув некоректні дані профілю');
+    }
+
+    final userData = responseData['data'];
+
+    if (userData is! Map<String, dynamic>) {
+      throw Exception('У відповіді сервера відсутні дані користувача');
+    }
+
+    return User.fromJson(userData);
   }
 
   // Оновлення профілю користувача.
@@ -30,7 +48,19 @@ class ProfileService {
       },
     );
 
-    final data = response.data as Map<String, dynamic>;
+    if (response.statusCode == null ||
+        response.statusCode! < 200 ||
+        response.statusCode! >= 300) {
+      throw Exception(
+        'Не вдалося оновити профіль: ${response.statusCode}',
+      );
+    }
+
+    final data = response.data;
+
+    if (data is! Map<String, dynamic>) {
+      throw Exception('Сервер повернув некоректну відповідь');
+    }
 
     return user.copyWith(
       email: data['email'] as String? ?? user.email,
@@ -44,11 +74,19 @@ class ProfileService {
     required int userId,
     required String newPassword,
   }) async {
-    await dio.put(
+    final response = await dio.put(
       '/users/$userId',
       data: {
         'password': newPassword,
       },
     );
+
+    if (response.statusCode == null ||
+        response.statusCode! < 200 ||
+        response.statusCode! >= 300) {
+      throw Exception(
+        'Не вдалося змінити пароль: ${response.statusCode}',
+      );
+    }
   }
 }
