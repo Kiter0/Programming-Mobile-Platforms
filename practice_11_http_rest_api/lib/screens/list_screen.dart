@@ -56,6 +56,67 @@ class _ListScreenState extends State<ListScreen> {
     }).toList();
   }
 
+  Future<void> _openUserDetails(User user) async {
+    final result = await Navigator.pushNamed(
+      context,
+      '/details',
+      arguments: user,
+    );
+
+    if (!mounted) return;
+
+    if (result is User) {
+      setState(() {
+        final index = _users.indexWhere(
+          (item) => item.id == result.id,
+        );
+
+        if (index != -1) {
+          _users[index] = result;
+        }
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Дані користувача оновлено'),
+        ),
+      );
+    } else if (result is Map && result['action'] == 'delete') {
+      setState(() {
+        _users.removeWhere(
+          (item) => item.id == result['id'],
+        );
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Користувача видалено'),
+        ),
+      );
+    }
+  }
+
+  Future<void> _openCreateScreen() async {
+    final result = await Navigator.pushNamed(
+      context,
+      '/create',
+    );
+
+    if (!mounted) return;
+
+    if (result is User) {
+      setState(() {
+        _users.insert(0, result);
+      });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Користувача додано'),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -160,13 +221,7 @@ class _ListScreenState extends State<ListScreen> {
 
                       return UserCard(
                         user: user,
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            '/details',
-                            arguments: user,
-                          );
-                        },
+                        onTap: () => _openUserDetails(user),
                       );
                     },
                   ),
@@ -177,9 +232,7 @@ class _ListScreenState extends State<ListScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/create');
-        },
+        onPressed: _openCreateScreen,
         child: const Icon(Icons.add),
       ),
     );

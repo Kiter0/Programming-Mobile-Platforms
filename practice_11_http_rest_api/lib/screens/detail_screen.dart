@@ -173,10 +173,10 @@ class _DetailScreenState extends State<DetailScreen> {
                 arguments: user,
               );
 
-              if (result is User && mounted) {
-                setState(() {
-                  user = result;
-                });
+              if (!mounted) return;
+
+              if (result is User) {
+                Navigator.pop(this.context, result);
               }
             },
           ),
@@ -252,11 +252,23 @@ class _DetailScreenState extends State<DetailScreen> {
             _buildInfo('Вулиця', user.address.street, Icons.home),
             _buildInfo('Квартира', user.address.suite, Icons.apartment),
             _buildInfo('Місто', user.address.city, Icons.location_city),
-            _buildInfo('Індекс', user.address.zipcode, Icons.markunread_mailbox),
+            _buildInfo(
+              'Індекс',
+              user.address.zipcode,
+              Icons.markunread_mailbox,
+            ),
 
             _buildSectionTitle('Географічні координати'),
-            _buildInfo('Широта', user.address.geo.lat, Icons.map_outlined),
-            _buildInfo('Довгота', user.address.geo.lng, Icons.map_outlined),
+            _buildInfo(
+              'Широта',
+              user.address.geo.lat,
+              Icons.map_outlined,
+            ),
+            _buildInfo(
+              'Довгота',
+              user.address.geo.lng,
+              Icons.map_outlined,
+            ),
 
             const SizedBox(height: 16),
             SizedBox(
