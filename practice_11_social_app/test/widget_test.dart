@@ -1,30 +1,33 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:practice_11_social_app/main.dart';
+import 'package:provider/provider.dart';
+import 'package:practice_11_social_app/core/storage/cache_service.dart';
+import 'package:practice_11_social_app/features/auth/data/repositories/auth_repository.dart';
+import 'package:practice_11_social_app/features/auth/presentation/providers/auth_provider.dart';
+import 'package:practice_11_social_app/features/auth/presentation/screens/login_screen.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  testWidgets('LoginScreen renders correctly', (WidgetTester tester) async {
+    final authProvider = AuthProvider(
+      AuthRepository(
+        dio: Dio(),
+        storage: const FlutterSecureStorage(),
+        cacheService: CacheService(),
+      ),
+    );
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: authProvider,
+        child: const MaterialApp(
+          home: LoginScreen(),
+        ),
+      ),
+    );
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
-
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('MiniSocial'), findsOneWidget);
+    expect(find.text('Увійти'), findsOneWidget);
   });
 }
